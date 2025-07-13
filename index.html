@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRICEWORM :: Rules of Engagement</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #000000 0%, #0a0a0a 30%, #1a1a1a 60%, #000000 100%);
+            color: #00ff9f;
+            font-family: 'Share Tech Mono', monospace;
+            line-height: 1.8;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+        
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 900;
+            background: linear-gradient(45deg, #00ff9f, #25E1ED, #ea00d9, #FFEB0B);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 40px rgba(0, 255, 159, 0.7);
+            margin-bottom: 1rem;
+            letter-spacing: 0.15em;
+        }
+        
+        .subtitle {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            color: #54c1e6;
+            letter-spacing: 0.3em;
+            margin-bottom: 3rem;
+        }
+        
+        .section {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #25E1ED;
+            border-radius: 12px;
+            padding: 3rem;
+            margin: 3rem auto;
+            position: relative;
+            backdrop-filter: blur(15px);
+            max-width: 900px;
+            box-shadow: 0 0 30px rgba(37, 225, 237, 0.3);
+        }
+        
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ea00d9, #FFEB0B, #00ff9f, transparent);
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #FFEB0B;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            text-align: center;
+        }
+        
+        .rule {
+            background: rgba(0, 255, 159, 0.08);
+            border-left: 4px solid #00ff9f;
+            padding: 1.5rem;
+            margin: 1.5rem auto;
+            border-radius: 6px;
+            text-align: left;
+            max-width: 700px;
+        }
+        
+        .rule-number {
+            color: #ea00d9;
+            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+        }
+        
+        .principle {
+            background: rgba(234, 0, 217, 0.15);
+            border: 2px solid #ea00d9;
+            padding: 2rem;
+            margin: 2rem auto;
+            border-radius: 8px;
+            text-align: center;
+            font-style: italic;
+            font-size: 1.1rem;
+            max-width: 800px;
+            box-shadow: 0 0 20px rgba(234, 0, 217, 0.2);
+        }
+        
+        .time-window {
+            background: rgba(37, 225, 237, 0.12);
+            border: 1px solid #25E1ED;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin: 1rem auto;
+            text-align: left;
+            max-width: 700px;
+        }
+        
+        .warning {
+            background: rgba(255, 235, 11, 0.15);
+            border: 2px solid #FFEB0B;
+            padding: 1.5rem;
+            border-radius: 8px;
+            color: #FFEB0B;
+            font-weight: bold;
+            margin: 2rem auto;
+            max-width: 600px;
+            box-shadow: 0 0 25px rgba(255, 235, 11, 0.3);
+        }
+
+        .wormhole-times {
+            background: rgba(160, 82, 45, 0.15);
+            border: 2px solid #A0522D;
+            padding: 2rem;
+            margin: 2rem auto;
+            border-radius: 8px;
+            max-width: 700px;
+            text-align: left;
+        }
+
+        .wormhole-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .wormhole-item {
+            background: rgba(139, 69, 19, 0.2);
+            padding: 0.75rem;
+            border-radius: 4px;
+            border-left: 3px solid #D2691E;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: #54c1e6;
+            font-size: 1rem;
+        }
+        
+        .vector-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.4;
+        }
+        
+        .glow {
+            filter: drop-shadow(0 0 15px currentColor);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+        
+        .pulse {
+            animation: pulse 4s infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+        
+        .float {
+            animation: float 8s infinite;
+        }
+        
+        @keyframes wormTravel {
+            0% { transform: translateX(-100px) rotate(0deg); }
+            25% { transform: translateX(0px) rotate(90deg); }
+            50% { transform: translateX(100px) rotate(180deg); }
+            75% { transform: translateX(0px) rotate(270deg); }
+            100% { transform: translateX(-100px) rotate(360deg); }
+        }
+        
+        .worm-travel {
+            animation: wormTravel 20s infinite linear;
+        }
+        
+        p {
+            text-align: center;
+            max-width: 800px;
+            margin: 1.5rem auto;
+            font-size: 1.05rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Vector Art -->
+    <svg class="vector-bg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+        <defs>
+            <!-- Gradients for the planet and worm -->
+            <radialGradient id="planetGradient" cx="50%" cy="40%" r="60%">
+                <stop offset="0%" style="stop-color:#3a2317;stop-opacity:0.9" />
+                <stop offset="40%" style="stop-color:#8B4513;stop-opacity:0.8" />
+                <stop offset="70%" style="stop-color:#2F1B14;stop-opacity:0.9" />
+                <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+            </radialGradient>
+            
+            <linearGradient id="wormGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+                <stop offset="30%" style="stop-color:#D2691E;stop-opacity:1" />
+                <stop offset="70%" style="stop-color:#A0522D;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#654321;stop-opacity:1" />
+            </linearGradient>
+            
+            <linearGradient id="mysticalGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#00ff9f;stop-opacity:0.6" />
+                <stop offset="50%" style="stop-color:#25E1ED;stop-opacity:0.4" />
+                <stop offset="100%" style="stop-color:#ea00d9;stop-opacity:0.6" />
+            </linearGradient>
+            
+            <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge> 
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+        
+        <!-- Mystical background stars and energy -->
+        <circle cx="150" cy="150" r="2" fill="#FFEB0B" opacity="0.7" class="pulse"/>
+        <circle cx="1700" cy="200" r="1.5" fill="#00ff9f" opacity="0.6" class="pulse"/>
+        <circle cx="300" cy="800" r="2" fill="#ea00d9" opacity="0.8" class="pulse"/>
+        <circle cx="1600" cy="700" r="1" fill="#25E1ED" opacity="0.7" class="pulse"/>
+        <circle cx="800" cy="100" r="1.5" fill="#FFEB0B" opacity="0.6" class="pulse"/>
+        
+        <!-- Central Planet -->
+        <g class="float">
+            <circle cx="960" cy="540" r="280" fill="url(#planetGradient)" stroke="#8B4513" stroke-width="2" filter="url(#glow)"/>
+            
+            <!-- Planet surface details -->
+            <ellipse cx="860" cy="480" rx="40" ry="25" fill="#654321" opacity="0.7"/>
+            <ellipse cx="1050" cy="520" rx="35" ry="20" fill="#654321" opacity="0.6"/>
+            <ellipse cx="940" cy="600" rx="50" ry="30" fill="#654321" opacity="0.8"/>
+            
+            <!-- Equatorial holes/tunnels -->
+            <ellipse cx="680" cy="540" rx="25" ry="15" fill="#000000" stroke="#00ff9f" stroke-width="2" opacity="0.9"/>
+            <ellipse cx="960" cy="540" rx="30" ry="18" fill="#000000" stroke="#25E1ED" stroke-width="2" opacity="0.9"/>
+            <ellipse cx="1240" cy="540" rx="25" ry="15" fill="#000000" stroke="#ea00d9" stroke-width="2" opacity="0.9"/>
+            
+            <!-- Mystical energy around holes -->
+            <circle cx="680" cy="540" r="35" fill="none" stroke="url(#mysticalGlow)" stroke-width="1" opacity="0.4" class="pulse"/>
+            <circle cx="960" cy="540" r="40" fill="none" stroke="url(#mysticalGlow)" stroke-width="1" opacity="0.4" class="pulse"/>
+            <circle cx="1240" cy="540" r="35" fill="none" stroke="url(#mysticalGlow)" stroke-width="1" opacity="0.4" class="pulse"/>
+        </g>
+        
+        <!-- The Great Worm -->
+        <g class="worm-travel">
+            <g transform="translate(960,540)">
+                <!-- Worm body segments -->
+                <ellipse cx="-150" cy="0" rx="80" ry="20" fill="url(#wormGradient)" filter="url(#glow)"/>
+                <ellipse cx="-80" cy="0" rx="85" ry="22" fill="url(#wormGradient)" filter="url(#glow)"/>
+                <ellipse cx="-10" cy="0" rx="90" ry="25" fill="url(#wormGradient)" filter="url(#glow)"/>
+                <ellipse cx="60" cy="0" rx="85" ry="22" fill="url(#wormGradient)" filter="url(#glow)"/>
+                <ellipse cx="130" cy="0" rx="75" ry="18" fill="url(#wormGradient)" filter="url(#glow)"/>
+                
+                <!-- Worm head -->
+                <ellipse cx="-220" cy="0" rx="60" ry="18" fill="#A0522D" filter="url(#glow)"/>
+                
+                <!-- Worm segments details -->
+                <line x1="-200" y1="-15" x2="-200" y2="15" stroke="#654321" stroke-width="2"/>
+                <line x1="-130" y1="-18" x2="-130" y2="18" stroke="#654321" stroke-width="2"/>
+                <line x1="-60" y1="-20" x2="-60" y2="20" stroke="#654321" stroke-width="2"/>
+                <line x1="10" y1="-22" x2="10" y2="22" stroke="#654321" stroke-width="2"/>
+                <line x1="80" y1="-20" x2="80" y2="20" stroke="#654321" stroke-width="2"/>
+                
+                <!-- Mystical energy trail -->
+                <path d="M200,0 Q250,-20 300,-10 Q350,10 400,0" fill="none" stroke="#00ff9f" stroke-width="2" opacity="0.6"/>
+                <path d="M200,0 Q250,20 300,10 Q350,-10 400,0" fill="none" stroke="#ea00d9" stroke-width="2" opacity="0.6"/>
+            </g>
+        </g>
+        
+        <!-- Orbital rings and mystical elements -->
+        <ellipse cx="960" cy="540" rx="400" ry="100" fill="none" stroke="#25E1ED" stroke-width="1" opacity="0.3" class="pulse"/>
+        <ellipse cx="960" cy="540" rx="350" ry="80" fill="none" stroke="#FFEB0B" stroke-width="1" opacity="0.2" class="pulse"/>
+        
+        <!-- Energy streams connecting the universe -->
+        <path d="M0,540 Q480,300 960,540 T1920,540" fill="none" stroke="url(#mysticalGlow)" stroke-width="2" opacity="0.3"/>
+        <path d="M0,400 Q480,200 960,400 T1920,400" fill="none" stroke="url(#mysticalGlow)" stroke-width="1" opacity="0.2"/>
+        <path d="M0,680 Q480,880 960,680 T1920,680" fill="none" stroke="url(#mysticalGlow)" stroke-width="1" opacity="0.2"/>
+        
+        <!-- Mystical symbols inspired by ancient texts -->
+        <g opacity="0.2">
+            <polygon points="100,300 120,260 140,300 120,340" fill="#FFEB0B" class="pulse"/>
+            <polygon points="1800,200 1820,160 1840,200 1820,240" fill="#ea00d9" class="pulse"/>
+            <polygon points="200,900 220,860 240,900 220,940" fill="#00ff9f" class="pulse"/>
+        </g>
+    </svg>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="title glow">PRICEWORM</div>
+            <div class="subtitle">RULES OF ENGAGEMENT</div>
+            
+            <!-- Header mystical symbol -->
+            <svg width="400" height="120" xmlns="http://www.w3.org/2000/svg" style="margin: 2rem auto; display: block;">
+                <defs>
+                    <linearGradient id="headerMystic" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+                        <stop offset="25%" style="stop-color:#00ff9f;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#25E1ED;stop-opacity:1" />
+                        <stop offset="75%" style="stop-color:#ea00d9;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#FFEB0B;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <path d="M50,60 L80,20 L110,60 L80,100 Z" fill="none" stroke="url(#headerMystic)" stroke-width="3" />
+                <path d="M290,60 L320,20 L350,60 L320,100 Z" fill="none" stroke="url(#headerMystic)" stroke-width="3" />
+                <line x1="110" y1="60" x2="290" y2="60" stroke="url(#headerMystic)" stroke-width="3" />
+                <circle cx="200" cy="60" r="12" fill="#A0522D" stroke="#00ff9f" stroke-width="2" />
+                <polygon points="185,60 200,45 215,60 200,75" fill="#FFEB0B" />
+            </svg>
+        </header>
+
+        <!-- Core Principles -->
+        <section class="section">
+            <h2 class="section-title">Core Principles</h2>
+            
+            <div class="principle">
+                "In the dance between known patterns and unknown outcomes, we find truth in timing and wisdom in patience."
+            </div>
+            
+            <div class="principle">
+                "The market speaks in whispers before it shouts. We listen to both with equal reverence."
+            </div>
+            
+            <div class="principle">
+                "Duality governs all: risk and reward, fear and greed, pattern and chaos. We embrace both sides."
+            </div>
+            
+            <div class="principle">
+                "Like the great worm that travels through the depths of worlds unseen, we move through market cycles with ancient wisdom and modern precision."
+            </div>
+        </section>
+
+        <!-- Wormhole Schedule -->
+        <section class="section">
+            <h2 class="section-title">The Wormhole Schedule</h2>
+            
+            <div class="wormhole-times">
+                <strong>Sacred Times of Opportunity:</strong>
+                <div class="wormhole-grid">
+                    <div class="wormhole-item"><strong>Midnight:</strong> 00:46-00:47</div>
+                    <div class="wormhole-item"><strong>Premarket:</strong> 06:43-06:44</div>
+                    <div class="wormhole-item"><strong>Mornturn:</strong> 11:23-11:24</div>
+                    <div class="wormhole-item"><strong>Midday:</strong> 11:57-11:58</div>
+                    <div class="wormhole-item"><strong>Afturn:</strong> 13:11-13:12</div>
+                    <div class="wormhole-item"><strong>Afterhours:</strong> 17:32-17:33</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rules of Engagement -->
+        <section class="section">
+            <h2 class="section-title">Rules of Engagement</h2>
+            
+            <div class="rule">
+                <span class="rule-number">01.</span> <strong>Wait for the Wormhole</strong><br>
+                Monitor each scheduled wormhole time. Observe the pivots that form during these sacred moments.
+            </div>
+            
+            <div class="rule">
+                <span class="rule-number">02.</span> <strong>Seek New Highs and Lows</strong><br>
+                After a wormhole, wait for price to form a new high or new low that gets retested during the next session.
+            </div>
+            
+            <div class="rule">
+                <span class="rule-number">03.</span> <strong>The Retest is Sacred</strong><br>
+                The retest of the new high/low is your entry signal. This is where the worm emerges from the depths.
+            </div>
+            
+            <div class="rule">
+                <span class="rule-number">04.</span> <strong>Honor the Last Low</strong><br>
+                Set your stop loss at the last significant low or near it. The earth beneath must hold.
+            </div>
+            
+            <div class="rule">
+                <span class="rule-number">05.</span> <strong>Exit at the Horizon</strong><br>
+                Take profits at session close or the next pivot/wormhole. Sometimes the worm surfaces, sometimes it dives deeper.
+            </div>
+            
+            <div class="rule">
+                <span class="rule-number">06.</span> <strong>The Safest Path</strong><br>
+                You may trade immediately at wormhole time, but it is always safest to wait until the next session open to decide direction.
+            </div>
+            
+            <div class="rule">
+                <span class="rule-number">07.</span> <strong>Continuation Protocol</strong><br>
+                If the next wormhole shows continuation signals, margin may be added and stop loss moved to breakeven for protection against reversal.
+            </div>
+        </section>
+
+        <!-- Risk Management -->
+        <section class="section">
+            <h2 class="section-title">Risk Doctrine</h2>
+            
+            <div class="warning">
+                ⚠ CAPITAL PRESERVATION IS PARAMOUNT ⚠
+            </div>
+            
+            <div class="rule">
+                <span class="rule-number">R1.</span> Never risk more than you can afford to lose completely
+            </div>
+            
+            <div class="rule">
+                <span class="rule-number">R2.</span> Position sizing must align with the probability of the unknown working against us
+            </div>
+            
+            <div class="rule">
+                <span class="rule-number">R3.</span> When in doubt, reduce position size or step aside entirely
+            </div>
+            
+            <div class="rule">
+                <span class="rule-number">R4.</span> Keep detailed records of what worked, what didn't, and what we learned
+            </div>
+        </section>
+
+        <!-- Philosophy -->
+        <section class="section">
+            <h2 class="section-title">The Unknown Doctrine</h2>
+            
+            <p>We operate in a realm where certainty is illusion and probability is our compass. The Priceworm methodology acknowledges that markets are complex adaptive systems where human psychology, algorithmic behavior, and global events create a tapestry of opportunity and risk.</p>
+            
+            <p>Our time-based approach respects the cyclical nature of market participants while remaining humble before the vastness of what we cannot predict or control.</p>
+            
+            <p>Like the sandworms of distant worlds that sense the smallest vibrations across vast deserts, we attune ourselves to the subtle tremors that precede great market movements at precise moments in time.</p>
+            
+            <div class="principle">
+                "In trading, as in the great journeys of legend, the path reveals itself to those who move with purpose, patience, and respect for forces greater than themselves."
+            </div>
+        </section>
+
+        <!-- Footer Vector Art -->
+        <footer class="footer">
+            <svg width="300" height="80" xmlns="http://www.w3.org/2000/svg" style="margin: 3rem auto; display: block;">
+                <defs>
+                    <linearGradient id="footerMystic" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#A0522D;stop-opacity:1" />
+                        <stop offset="33%" style="stop-color:#ea00d9;stop-opacity:1" />
+                        <stop offset="66%" style="stop-color:#00ff9f;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#25E1ED;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <ellipse cx="60" cy="40" rx="30" ry="10" fill="none" stroke="url(#footerMystic)" stroke-width="2" />
+                <ellipse cx="150" cy="40" rx="35" ry="12" fill="none" stroke="url(#footerMystic)" stroke-width="2" />
+                <ellipse cx="240" cy="40" rx="30" ry="10" fill="none" stroke="url(#footerMystic)" stroke-width="2" />
+                <line x1="90" y1="40" x2="120" y2="40" stroke="url(#footerMystic)" stroke-width="2" stroke-dasharray="3,3" />
+                <line x1="180" y1="40" x2="210" y2="40" stroke="url(#footerMystic)" stroke-width="2" stroke-dasharray="3,3" />
+                <circle cx="150" cy="40" r="5" fill="#FFEB0B" />
+            </svg>
+            
+            <p>Priceworm Protocol v1.0 | Embracing the Duality of Markets</p>
+            <p style="font-size: 0.9rem; margin-top: 1rem; opacity: 0.8;">
+                "The best traders are not those who predict the future, but those who adapt to it."
+            </p>
+            <p style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.6;">
+                "Through the deep paths of market cycles, we journey with purpose."
+            </p>
+        </footer>
+    </div>
+</body>
+
+</html>
