@@ -1783,7 +1783,7 @@ This is an enhanced TRADE ALERT based on market structure."""
 
 # Main execution
 if __name__ == "__main__":
-    TOKEN = "7536934982:AAEjlNA3BycmznZJGBh8TN27-rgbNNh3imk"
+    TOKEN = "YOUR_BOT_TOKEN_HER"
     
     if TOKEN == "YOUR_BOT_TOKEN_HERE":
         print("❌ Please replace TOKEN with your actual bot token")
