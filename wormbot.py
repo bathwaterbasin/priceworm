@@ -1541,18 +1541,18 @@ This is an enhanced TRADE ALERT based on market structure."""
                 print(f"Error sending proximity alert: {e}")
     
     async def check_wormhole_windows(self):
-        """Enhanced wormhole detection with debugging"""
+        """FIXED: Enhanced wormhole detection with proper timezone handling"""
         est = pytz.timezone('US/Eastern')
         now = datetime.now(est)
         current_time = now.time()
-        current_date = now.date()
+        current_date = now.date()  # Use EST date consistently
         
         print(f"🕐 Current EST time: {current_time.strftime('%H:%M:%S')} on {current_date}")
         
         for name, wormhole_time in self.wormholes.items():
-            # Check if we're in the wormhole window (1 minute window)
+            # FIXED: Use current_date (EST timezone) instead of datetime.today()
             wormhole_start = wormhole_time
-            wormhole_end = (datetime.combine(datetime.today(), wormhole_time) + 
+            wormhole_end = (datetime.combine(current_date, wormhole_time) + 
                            timedelta(minutes=1)).time()
             
             pivot_key = f"{current_date}_{name}_pivot"
