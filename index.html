@@ -167,7 +167,7 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 40px 20px;
-            background: rgba(10, 10, 46, 0.95);
+            background: rgba(10, 10, 46, 0.85);
             border-radius: 20px;
             margin-top: 50px;
             margin-bottom: 50px;
@@ -178,7 +178,7 @@
             animation: contentGlow 3s ease-in-out infinite alternate;
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
         }
 
         .content-section::before {
@@ -188,7 +188,7 @@
             left: -2px;
             right: -2px;
             bottom: -2px;
-            background: linear-gradient(45deg, #00ff88, #8b4cf7, #ff6b35, #00ffff, #00ff88);
+            background: linear-gradient(45deg, #00aa55, #5b2c8a, #cc4420, #008888, #00aa55);
             background-size: 400% 400%;
             border-radius: 22px;
             z-index: -1;
@@ -214,13 +214,13 @@
         @keyframes contentGlow {
             from { 
                 box-shadow: 
-                    0 0 30px rgba(0, 255, 136, 0.3),
-                    inset 0 0 30px rgba(0, 255, 136, 0.1);
+                    0 0 30px rgba(0, 170, 85, 0.3),
+                    inset 0 0 30px rgba(0, 170, 85, 0.1);
             }
             to { 
                 box-shadow: 
-                    0 0 50px rgba(139, 76, 247, 0.5),
-                    inset 0 0 50px rgba(139, 76, 247, 0.2);
+                    0 0 50px rgba(91, 44, 138, 0.5),
+                    inset 0 0 50px rgba(91, 44, 138, 0.2);
             }
         }
 
@@ -923,7 +923,7 @@
     </div>
 
     <!-- Footer Section -->
-    <footer style="background: rgba(10, 10, 46, 0.95); padding: 40px 20px; text-align: center; border-top: 2px solid #00ff88; margin-top: 50px; position: relative; overflow: hidden; backdrop-filter: blur(10px);">
+    <footer style="background: rgba(10, 10, 46, 0.85); padding: 40px 20px; text-align: center; border-top: 2px solid #00aa55; margin-top: 50px; position: relative; overflow: hidden; backdrop-filter: blur(15px);">
         <!-- Animated footer background -->
         <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(45deg, rgba(0, 255, 136, 0.05), rgba(139, 76, 247, 0.05), rgba(255, 107, 53, 0.05)); animation: footerFlow 8s ease infinite; z-index: 0;"></div>
         
