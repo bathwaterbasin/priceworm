@@ -8,10 +8,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: radial-gradient(circle, rgba(10,10,46,0.9), rgba(22,33,62,0.95), rgba(0,0,0,0.98)), url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjgwMCIgdmlld0JveD0iMCAwIDgwMCA4MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjQwMCIgY3k9IjQwMCIgcj0iNDAwIiBmaWxsPSIjMzQ4MWI4Ii8+CjxwYXRoIGQ9Ik0yMDAgMzAwIEMzMDAgMjUwIDQ1MCAyMDAgNjAwIDI1MCBTIDcwMCAzNTAgNjAwIDQwMCBTIDQ1MCA0NTAgMzAwIDQwMCBTIDIwMCAzNTAgMjAwIDMwMFoiIGZpbGw9IiM2ZGNkNTciLz4KPHA+PC9wPgpwYXRoIGQ9Ik0xNTAgNTAwIEMyNTAgNDUwIDM4MCA0NTAgNTAwIDUwMCBTIDY1MCA1NTAgNjAwIDYwMCBTIDQ1MCA2NTAgMzAwIDYwMCBTIDE1MCA1NTAgMTUwIDUwMFoiIGZpbGw9IiM2ZGNkNTciLz4KPHA+PC9wPgpjaXJjbGUgY3g9IjE4MCIgY3k9IjI4MCIgcj0iNCIgZmlsbD0iIzIyNzMzMyIvPgpjaXJjbGUgY3g9IjUyMCIgY3k9IjM2MCIgcj0iNiIgZmlsbD0iIzIyNzMzMyIvPgpjaXJjbGUgY3g9IjMwMCIgY3k9IjU4MCIgcj0iNSIgZmlsbD0iIzIyNzMzMyIvPgo8cmVjdCB4PSIzODAiIHk9IjE4MCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjYzY5YzZkIi8+CjxyZWN0IHg9IjM2MCIgeT0iMTcwIiB3aWR0aD0iODAiIGhlaWdodD0iMjAiIGZpbGw9IiNhODQ2MzIiLz4KPHJlY3QgeD0iMzYwIiB5PSIyNDAiIHdpZHRoPSI4MCIgaGVpZ2h0PSIyMCIgZmlsbD0iI2E4NDYzMiIvPgo8L3N2Zz4=');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            background: radial-gradient(circle, rgba(10,10,46,0.9), rgba(22,33,62,0.95), rgba(0,0,0,0.98));
             overflow: hidden;
             font-family: 'Arial Black', sans-serif;
             height: 100vh;
@@ -145,6 +142,10 @@
 <body>
     <div class="container">
         <svg width="100%" height="100%" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background world image -->
+            <image href="wbg.png" x="300" y="200" width="600" height="400" 
+                   opacity="0.6" preserveAspectRatio="xMidYMid meet"/>
+            
             <!-- Background stars -->
             <g class="stars">
                 <circle cx="100" cy="100" r="2" fill="#ffffff" opacity="0.8"/>
