@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRICEWORM Wormhole</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle, #0a0a2e, #16213e, #000);
+            overflow: hidden;
+            font-family: 'Arial Black', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .wormhole {
+            animation: rotate 20s linear infinite;
+            transform-origin: center;
+        }
+        
+        .worm-segment {
+            animation: slither 3s ease-in-out infinite, circularMotion 8s linear infinite;
+        }
+        
+        .worm-head {
+            animation: headBob 2s ease-in-out infinite, circularMotion 8s linear infinite;
+        }
+        
+        .title-text {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        .tunnel-ring {
+            animation: tunnel 8s linear infinite;
+        }
+        
+        .stars {
+            animation: twinkle 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes slither {
+            0% { transform: translateX(0) translateY(0) rotate(0deg); }
+            25% { transform: translateX(20px) translateY(-10px) rotate(5deg); }
+            50% { transform: translateX(0) translateY(-20px) rotate(0deg); }
+            75% { transform: translateX(-20px) translateY(-10px) rotate(-5deg); }
+            100% { transform: translateX(0) translateY(0) rotate(0deg); }
+        }
+        
+        @keyframes circularMotion {
+            0% { 
+                transform: rotate(0deg) translateX(120px) rotate(0deg);
+            }
+            100% { 
+                transform: rotate(360deg) translateX(120px) rotate(-360deg);
+            }
+        }
+        
+        @keyframes headBob {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(10deg); }
+        }
+        
+        @keyframes glow {
+            from { 
+                filter: drop-shadow(0 0 20px #ff6b35) drop-shadow(0 0 40px #ff6b35);
+                fill: #ff6b35;
+            }
+            to { 
+                filter: drop-shadow(0 0 30px #ffaa00) drop-shadow(0 0 60px #ffaa00);
+                fill: #ffaa00;
+            }
+        }
+        
+        @keyframes tunnel {
+            from { 
+                transform: scale(0.1) translateZ(0);
+                opacity: 0;
+            }
+            to { 
+                transform: scale(3) translateZ(0);
+                opacity: 0.8;
+            }
+        }
+        
+        @keyframes twinkle {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
+        }
+        
+        .segment-1 { animation-delay: 0s; }
+        .segment-2 { animation-delay: 0.2s; }
+        .segment-3 { animation-delay: 0.4s; }
+        .segment-4 { animation-delay: 0.6s; }
+        .segment-5 { animation-delay: 0.8s; }
+        .segment-6 { animation-delay: 1.0s; }
+        .segment-7 { animation-delay: 1.2s; }
+        .segment-8 { animation-delay: 1.4s; }
+        .segment-9 { animation-delay: 1.6s; }
+        
+        .ring-1 { animation-delay: 0s; }
+        .ring-2 { animation-delay: 1s; }
+        .ring-3 { animation-delay: 2s; }
+        .ring-4 { animation-delay: 3s; }
+        .ring-5 { animation-delay: 4s; }
+        .ring-6 { animation-delay: 5s; }
+        .ring-7 { animation-delay: 6s; }
+        .ring-8 { animation-delay: 7s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <svg width="100%" height="100%" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background stars -->
+            <g class="stars">
+                <circle cx="100" cy="100" r="2" fill="#ffffff" opacity="0.8"/>
+                <circle cx="200" cy="150" r="1.5" fill="#ffffff" opacity="0.6"/>
+                <circle cx="300" cy="80" r="1" fill="#ffffff" opacity="0.9"/>
+                <circle cx="950" cy="120" r="2" fill="#ffffff" opacity="0.7"/>
+                <circle cx="1100" cy="200" r="1.5" fill="#ffffff" opacity="0.8"/>
+                <circle cx="150" cy="700" r="1" fill="#ffffff" opacity="0.6"/>
+                <circle cx="1050" cy="650" r="2" fill="#ffffff" opacity="0.9"/>
+                <circle cx="50" cy="500" r="1.5" fill="#ffffff" opacity="0.7"/>
+            </g>
+            
+            <!-- Wormhole gradient definitions -->
+            <defs>
+                <radialGradient id="wormholeGradient" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:0.8"/>
+                    <stop offset="30%" style="stop-color:#8b4cf7;stop-opacity:0.6"/>
+                    <stop offset="60%" style="stop-color:#2d1b69;stop-opacity:0.4"/>
+                    <stop offset="100%" style="stop-color:#000814;stop-opacity:0.1"/>
+                </radialGradient>
+                
+                <radialGradient id="tunnelGradient" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" style="stop-color:transparent;stop-opacity:0"/>
+                    <stop offset="70%" style="stop-color:#4a148c;stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:#ff6b35;stop-opacity:0.8"/>
+                </radialGradient>
+                
+                <linearGradient id="wormGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#ff6b35"/>
+                    <stop offset="50%" style="stop-color:#ffaa00"/>
+                    <stop offset="100%" style="stop-color:#ff6b35"/>
+                </linearGradient>
+                
+                <filter id="blur">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="2"/>
+                </filter>
+            </defs>
+            
+            <!-- Wormhole tunnel rings -->
+            <g class="wormhole" transform="translate(600,400)">
+                <circle class="tunnel-ring ring-1" cx="0" cy="0" r="50" fill="none" stroke="url(#tunnelGradient)" stroke-width="3" opacity="0.6"/>
+                <circle class="tunnel-ring ring-2" cx="0" cy="0" r="80" fill="none" stroke="url(#tunnelGradient)" stroke-width="4" opacity="0.5"/>
+                <circle class="tunnel-ring ring-3" cx="0" cy="0" r="110" fill="none" stroke="url(#tunnelGradient)" stroke-width="5" opacity="0.4"/>
+                <circle class="tunnel-ring ring-4" cx="0" cy="0" r="140" fill="none" stroke="url(#tunnelGradient)" stroke-width="6" opacity="0.3"/>
+                <circle class="tunnel-ring ring-5" cx="0" cy="0" r="170" fill="none" stroke="url(#tunnelGradient)" stroke-width="7" opacity="0.2"/>
+                <circle class="tunnel-ring ring-6" cx="0" cy="0" r="200" fill="none" stroke="url(#tunnelGradient)" stroke-width="8" opacity="0.1"/>
+                <circle class="tunnel-ring ring-7" cx="0" cy="0" r="230" fill="none" stroke="url(#tunnelGradient)" stroke-width="9" opacity="0.08"/>
+                <circle class="tunnel-ring ring-8" cx="0" cy="0" r="260" fill="none" stroke="url(#tunnelGradient)" stroke-width="10" opacity="0.05"/>
+                
+                <!-- Central wormhole -->
+                <circle cx="0" cy="0" r="300" fill="url(#wormholeGradient)" opacity="0.4"/>
+            </g>
+            
+            <!-- Slithering worm -->
+            <g transform="translate(600,400)">
+                <!-- Worm body segments (from tail to head) -->
+                <ellipse class="worm-segment segment-9" cx="0" cy="0" rx="15" ry="8" fill="url(#wormGradient)" opacity="0.9"/>
+                <ellipse class="worm-segment segment-8" cx="0" cy="0" rx="16" ry="9" fill="url(#wormGradient)" opacity="0.95"/>
+                <ellipse class="worm-segment segment-7" cx="0" cy="0" rx="17" ry="10" fill="url(#wormGradient)"/>
+                <ellipse class="worm-segment segment-6" cx="0" cy="0" rx="18" ry="11" fill="url(#wormGradient)"/>
+                <ellipse class="worm-segment segment-5" cx="0" cy="0" rx="19" ry="12" fill="url(#wormGradient)"/>
+                <ellipse class="worm-segment segment-4" cx="0" cy="0" rx="20" ry="13" fill="url(#wormGradient)"/>
+                <ellipse class="worm-segment segment-3" cx="0" cy="0" rx="21" ry="14" fill="url(#wormGradient)"/>
+                <ellipse class="worm-segment segment-2" cx="0" cy="0" rx="22" ry="15" fill="url(#wormGradient)"/>
+                
+                <!-- Worm head -->
+                <g class="worm-head">
+                    <ellipse cx="0" cy="0" rx="25" ry="18" fill="url(#wormGradient)"/>
+                    <!-- Eyes -->
+                    <circle cx="10" cy="-7" r="4" fill="#000" opacity="0.8"/>
+                    <circle cx="10" cy="7" r="4" fill="#000" opacity="0.8"/>
+                    <circle cx="12" cy="-7" r="1.5" fill="#fff"/>
+                    <circle cx="12" cy="7" r="1.5" fill="#fff"/>
+                    <!-- Mouth -->
+                    <path d="M 20 0 Q 25 3 20 6" stroke="#000" stroke-width="2" fill="none" opacity="0.6"/>
+                </g>
+                
+                <!-- Circular worm trail effect -->
+                <circle cx="0" cy="0" r="120" stroke="url(#wormGradient)" stroke-width="3" 
+                        fill="none" opacity="0.2" filter="url(#blur)" stroke-dasharray="20,10">
+                    <animateTransform attributeName="transform" type="rotate" 
+                                    values="0;360" dur="8s" repeatCount="indefinite"/>
+                </circle>
+            </g>
+            
+            <!-- PRICEWORM title -->
+            <text x="600" y="150" text-anchor="middle" class="title-text" 
+                  font-family="Arial Black, sans-serif" font-size="60" font-weight="bold" 
+                  fill="#ff6b35" stroke="#000" stroke-width="2">
+                PRICEWORM
+            </text>
+            
+            <!-- Subtitle -->
+            <text x="600" y="200" text-anchor="middle" 
+                  font-family="Arial, sans-serif" font-size="20" 
+                  fill="#8b4cf7" opacity="0.8">
+                Through the Digital Dimension
+            </text>
+            
+            <!-- Additional wormhole energy effects -->
+            <g transform="translate(600,400)" opacity="0.6">
+                <path d="M -250 0 Q -200 -100 -150 0 Q -100 100 -50 0 Q 0 -100 50 0 Q 100 100 150 0" 
+                      stroke="#ff6b35" stroke-width="2" fill="none" opacity="0.5">
+                    <animate attributeName="d" 
+                             values="M -250 0 Q -200 -100 -150 0 Q -100 100 -50 0 Q 0 -100 50 0 Q 100 100 150 0;
+                                     M -250 0 Q -200 100 -150 0 Q -100 -100 -50 0 Q 0 100 50 0 Q 100 -100 150 0;
+                                     M -250 0 Q -200 -100 -150 0 Q -100 100 -50 0 Q 0 -100 50 0 Q 100 100 150 0" 
+                             dur="4s" repeatCount="indefinite"/>
+                </path>
+                
+                <path d="M -200 50 Q -150 -50 -100 50 Q -50 150 0 50 Q 50 -50 100 50 Q 150 150 200 50" 
+                      stroke="#8b4cf7" stroke-width="1.5" fill="none" opacity="0.4">
+                    <animate attributeName="d" 
+                             values="M -200 50 Q -150 -50 -100 50 Q -50 150 0 50 Q 50 -50 100 50 Q 150 150 200 50;
+                                     M -200 50 Q -150 150 -100 50 Q -50 -50 0 50 Q 50 150 100 50 Q 150 -50 200 50;
+                                     M -200 50 Q -150 -50 -100 50 Q -50 150 0 50 Q 50 -50 100 50 Q 150 150 200 50" 
+                             dur="5s" repeatCount="indefinite"/>
+                </path>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>
