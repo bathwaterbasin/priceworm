@@ -9,11 +9,13 @@
             margin: 0;
             padding: 0;
             background: radial-gradient(circle, rgba(10,10,46,0.9), rgba(22,33,62,0.95), rgba(0,0,0,0.98));
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             font-family: 'Arial Black', sans-serif;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: flex-start;
             align-items: center;
         }
         
@@ -141,7 +143,7 @@
 </head>
 <body>
     <div class="container">
-        <svg width="100%" height="100%" viewBox="0 0 1200 3000" xmlns="http://www.w3.org/2000/svg">
+        <svg width="100%" height="100%" viewBox="0 0 1200 4500" xmlns="http://www.w3.org/2000/svg">
             <!-- Background world image -->
             <image href="wbg.png" x="300" y="200" width="600" height="400" 
                    opacity="0.6" preserveAspectRatio="xMidYMid meet"/>
@@ -255,91 +257,91 @@
             </a>
             
             <!-- PRICEWORM Methodology Content -->
-            <foreignObject x="50" y="780" width="1100" height="2000">
-                <div xmlns="http://www.w3.org/1999/xhtml" style="color: #ffffff; font-family: Arial, sans-serif; padding: 20px; background: rgba(10,10,46,0.8); border-radius: 15px; backdrop-filter: blur(10px);">
+            <foreignObject x="50" y="780" width="1100" height="3600">
+                <div xmlns="http://www.w3.org/1999/xhtml" style="color: #ffffff; font-family: Arial, sans-serif; padding: 30px; background: rgba(10,10,46,0.85); border-radius: 20px; backdrop-filter: blur(15px); min-height: 3500px;">
                     
-                    <h2 style="color: #ff6b35; text-align: center; font-size: 32px; margin-bottom: 30px; text-shadow: 0 0 20px #ff6b35;">Core Principles</h2>
+                    <h2 style="color: #ff6b35; text-align: center; font-size: 42px; margin-bottom: 40px; text-shadow: 0 0 25px #ff6b35; font-weight: bold;">Core Principles</h2>
                     
-                    <div style="margin-bottom: 30px; line-height: 1.8; font-size: 16px;">
-                        <p style="font-style: italic; color: #ffaa00; margin-bottom: 15px;">"In the dance between known patterns and unknown outcomes, we find truth in timing and wisdom in patience."</p>
-                        <p style="font-style: italic; color: #ffaa00; margin-bottom: 15px;">"The market speaks in whispers before it shouts. We listen to both with equal reverence."</p>
-                        <p style="font-style: italic; color: #ffaa00; margin-bottom: 15px;">"Duality governs all: risk and reward, fear and greed, pattern and chaos. We embrace both sides."</p>
-                        <p style="font-style: italic; color: #ffaa00; margin-bottom: 15px;">"Like the great worm that travels through the depths of worlds unseen, we move through market cycles with ancient wisdom and modern precision."</p>
+                    <div style="margin-bottom: 40px; line-height: 2.0; font-size: 20px;">
+                        <p style="font-style: italic; color: #ffaa00; margin-bottom: 20px; font-size: 22px;">"In the dance between known patterns and unknown outcomes, we find truth in timing and wisdom in patience."</p>
+                        <p style="font-style: italic; color: #ffaa00; margin-bottom: 20px; font-size: 22px;">"The market speaks in whispers before it shouts. We listen to both with equal reverence."</p>
+                        <p style="font-style: italic; color: #ffaa00; margin-bottom: 20px; font-size: 22px;">"Duality governs all: risk and reward, fear and greed, pattern and chaos. We embrace both sides."</p>
+                        <p style="font-style: italic; color: #ffaa00; margin-bottom: 20px; font-size: 22px;">"Like the great worm that travels through the depths of worlds unseen, we move through market cycles with ancient wisdom and modern precision."</p>
                     </div>
                     
-                    <h3 style="color: #ff6b35; font-size: 24px; margin-bottom: 20px; text-shadow: 0 0 15px #ff6b35;">The Wormhole Schedule</h3>
-                    <p style="color: #8bb5ff; font-size: 18px; margin-bottom: 15px;">Sacred Times of Opportunity:</p>
+                    <h3 style="color: #ff6b35; font-size: 36px; margin-bottom: 30px; text-shadow: 0 0 20px #ff6b35; font-weight: bold;">The Wormhole Schedule</h3>
+                    <p style="color: #8bb5ff; font-size: 24px; margin-bottom: 25px; font-weight: bold;">Sacred Times of Opportunity:</p>
                     
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
-                        <div style="background: rgba(255,107,53,0.2); padding: 15px; border-radius: 10px; border: 2px solid #ff6b35;">
-                            <strong style="color: #ff6b35;">Midnight</strong><br/>
-                            <span style="color: #ffaa00;">00:46-00:47</span>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 50px;">
+                        <div style="background: rgba(255,107,53,0.25); padding: 25px; border-radius: 15px; border: 3px solid #ff6b35; text-align: center;">
+                            <strong style="color: #ff6b35; font-size: 24px; display: block; margin-bottom: 10px;">Midnight</strong>
+                            <span style="color: #ffaa00; font-size: 20px; font-weight: bold;">00:46-00:47</span>
                         </div>
-                        <div style="background: rgba(255,107,53,0.2); padding: 15px; border-radius: 10px; border: 2px solid #ff6b35;">
-                            <strong style="color: #ff6b35;">Premarket</strong><br/>
-                            <span style="color: #ffaa00;">06:43-06:44</span>
+                        <div style="background: rgba(255,107,53,0.25); padding: 25px; border-radius: 15px; border: 3px solid #ff6b35; text-align: center;">
+                            <strong style="color: #ff6b35; font-size: 24px; display: block; margin-bottom: 10px;">Premarket</strong>
+                            <span style="color: #ffaa00; font-size: 20px; font-weight: bold;">06:43-06:44</span>
                         </div>
-                        <div style="background: rgba(255,107,53,0.2); padding: 15px; border-radius: 10px; border: 2px solid #ff6b35;">
-                            <strong style="color: #ff6b35;">Midday</strong><br/>
-                            <span style="color: #ffaa00;">11:57-11:58</span>
+                        <div style="background: rgba(255,107,53,0.25); padding: 25px; border-radius: 15px; border: 3px solid #ff6b35; text-align: center;">
+                            <strong style="color: #ff6b35; font-size: 24px; display: block; margin-bottom: 10px;">Midday</strong>
+                            <span style="color: #ffaa00; font-size: 20px; font-weight: bold;">11:57-11:58</span>
                         </div>
-                        <div style="background: rgba(255,107,53,0.2); padding: 15px; border-radius: 10px; border: 2px solid #ff6b35;">
-                            <strong style="color: #ff6b35;">Afterhours</strong><br/>
-                            <span style="color: #ffaa00;">17:32-17:33</span>
-                        </div>
-                    </div>
-                    
-                    <h3 style="color: #ff6b35; font-size: 24px; margin-bottom: 20px; text-shadow: 0 0 15px #ff6b35;">Rules of Engagement</h3>
-                    
-                    <div style="margin-bottom: 30px;">
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(139,181,255,0.1); border-left: 4px solid #8bb5ff; border-radius: 5px;">
-                            <strong style="color: #8bb5ff;">01. Wait for the Wormhole</strong><br/>
-                            Monitor each scheduled wormhole time. Observe the pivots that form during these sacred moments.
-                        </div>
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(139,181,255,0.1); border-left: 4px solid #8bb5ff; border-radius: 5px;">
-                            <strong style="color: #8bb5ff;">02. Seek New Highs and Lows</strong><br/>
-                            After a wormhole, wait for price to form a new high or new low that gets retested during the next session.
-                        </div>
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(139,181,255,0.1); border-left: 4px solid #8bb5ff; border-radius: 5px;">
-                            <strong style="color: #8bb5ff;">03. The Retest is Sacred</strong><br/>
-                            The retest of the new high/low is your entry signal. This is where the worm emerges from the depths.
-                        </div>
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(139,181,255,0.1); border-left: 4px solid #8bb5ff; border-radius: 5px;">
-                            <strong style="color: #8bb5ff;">04. Honor the Last Low</strong><br/>
-                            Set your stop loss at the last significant low or near it. The earth beneath must hold.
-                        </div>
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(139,181,255,0.1); border-left: 4px solid #8bb5ff; border-radius: 5px;">
-                            <strong style="color: #8bb5ff;">05. Exit at the Horizon</strong><br/>
-                            Take profits at session close or the next pivot/wormhole. Sometimes the worm surfaces, sometimes it dives deeper.
-                        </div>
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(139,181,255,0.1); border-left: 4px solid #8bb5ff; border-radius: 5px;">
-                            <strong style="color: #8bb5ff;">06. The Safest Path</strong><br/>
-                            You may trade immediately at wormhole time, but it is always safest to wait until the next session open to decide direction.
-                        </div>
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(139,181,255,0.1); border-left: 4px solid #8bb5ff; border-radius: 5px;">
-                            <strong style="color: #8bb5ff;">07. Continuation Protocol</strong><br/>
-                            If the next wormhole shows continuation signals, margin may be added and stop loss moved to breakeven for protection against reversal.
+                        <div style="background: rgba(255,107,53,0.25); padding: 25px; border-radius: 15px; border: 3px solid #ff6b35; text-align: center;">
+                            <strong style="color: #ff6b35; font-size: 24px; display: block; margin-bottom: 10px;">Afterhours</strong>
+                            <span style="color: #ffaa00; font-size: 20px; font-weight: bold;">17:32-17:33</span>
                         </div>
                     </div>
                     
-                    <h3 style="color: #ff6b35; font-size: 24px; margin-bottom: 20px; text-shadow: 0 0 15px #ff6b35;">Risk Doctrine</h3>
-                    <div style="background: rgba(255,107,53,0.15); padding: 20px; border-radius: 10px; border: 2px solid #ff6b35; margin-bottom: 30px;">
-                        <p style="text-align: center; color: #ff6b35; font-size: 20px; font-weight: bold; margin-bottom: 15px;">⚠ CAPITAL PRESERVATION IS PARAMOUNT ⚠</p>
-                        <p style="margin-bottom: 10px;"><strong style="color: #ffaa00;">R1.</strong> Never risk more than you can afford to lose completely</p>
-                        <p style="margin-bottom: 10px;"><strong style="color: #ffaa00;">R2.</strong> Position sizing must align with the probability of the unknown working against us</p>
-                        <p style="margin-bottom: 10px;"><strong style="color: #ffaa00;">R3.</strong> When in doubt, reduce position size or step aside entirely</p>
-                        <p style="margin-bottom: 0;"><strong style="color: #ffaa00;">R4.</strong> Keep detailed records of what worked, what didn't, and what we learned</p>
+                    <h3 style="color: #ff6b35; font-size: 36px; margin-bottom: 30px; text-shadow: 0 0 20px #ff6b35; font-weight: bold;">Rules of Engagement</h3>
+                    
+                    <div style="margin-bottom: 50px;">
+                        <div style="margin-bottom: 25px; padding: 20px; background: rgba(139,181,255,0.15); border-left: 6px solid #8bb5ff; border-radius: 10px;">
+                            <strong style="color: #8bb5ff; font-size: 22px; display: block; margin-bottom: 10px;">01. Wait for the Wormhole</strong>
+                            <span style="font-size: 18px; line-height: 1.6;">Monitor each scheduled wormhole time. Observe the pivots that form during these sacred moments.</span>
+                        </div>
+                        <div style="margin-bottom: 25px; padding: 20px; background: rgba(139,181,255,0.15); border-left: 6px solid #8bb5ff; border-radius: 10px;">
+                            <strong style="color: #8bb5ff; font-size: 22px; display: block; margin-bottom: 10px;">02. Seek New Highs and Lows</strong>
+                            <span style="font-size: 18px; line-height: 1.6;">After a wormhole, wait for price to form a new high or new low that gets retested during the next session.</span>
+                        </div>
+                        <div style="margin-bottom: 25px; padding: 20px; background: rgba(139,181,255,0.15); border-left: 6px solid #8bb5ff; border-radius: 10px;">
+                            <strong style="color: #8bb5ff; font-size: 22px; display: block; margin-bottom: 10px;">03. The Retest is Sacred</strong>
+                            <span style="font-size: 18px; line-height: 1.6;">The retest of the new high/low is your entry signal. This is where the worm emerges from the depths.</span>
+                        </div>
+                        <div style="margin-bottom: 25px; padding: 20px; background: rgba(139,181,255,0.15); border-left: 6px solid #8bb5ff; border-radius: 10px;">
+                            <strong style="color: #8bb5ff; font-size: 22px; display: block; margin-bottom: 10px;">04. Honor the Last Low</strong>
+                            <span style="font-size: 18px; line-height: 1.6;">Set your stop loss at the last significant low or near it. The earth beneath must hold.</span>
+                        </div>
+                        <div style="margin-bottom: 25px; padding: 20px; background: rgba(139,181,255,0.15); border-left: 6px solid #8bb5ff; border-radius: 10px;">
+                            <strong style="color: #8bb5ff; font-size: 22px; display: block; margin-bottom: 10px;">05. Exit at the Horizon</strong>
+                            <span style="font-size: 18px; line-height: 1.6;">Take profits at session close or the next pivot/wormhole. Sometimes the worm surfaces, sometimes it dives deeper.</span>
+                        </div>
+                        <div style="margin-bottom: 25px; padding: 20px; background: rgba(139,181,255,0.15); border-left: 6px solid #8bb5ff; border-radius: 10px;">
+                            <strong style="color: #8bb5ff; font-size: 22px; display: block; margin-bottom: 10px;">06. The Safest Path</strong>
+                            <span style="font-size: 18px; line-height: 1.6;">You may trade immediately at wormhole time, but it is always safest to wait until the next session open to decide direction.</span>
+                        </div>
+                        <div style="margin-bottom: 25px; padding: 20px; background: rgba(139,181,255,0.15); border-left: 6px solid #8bb5ff; border-radius: 10px;">
+                            <strong style="color: #8bb5ff; font-size: 22px; display: block; margin-bottom: 10px;">07. Continuation Protocol</strong>
+                            <span style="font-size: 18px; line-height: 1.6;">If the next wormhole shows continuation signals, margin may be added and stop loss moved to breakeven for protection against reversal.</span>
+                        </div>
                     </div>
                     
-                    <h3 style="color: #ff6b35; font-size: 24px; margin-bottom: 20px; text-shadow: 0 0 15px #ff6b35;">The Unknown Doctrine</h3>
-                    <div style="margin-bottom: 30px; line-height: 1.8; font-size: 16px;">
-                        <p style="margin-bottom: 15px;">We operate in a realm where certainty is illusion and probability is our compass. The Priceworm methodology acknowledges that markets are complex adaptive systems where human psychology, algorithmic behavior, and global events create a tapestry of opportunity and risk.</p>
+                    <h3 style="color: #ff6b35; font-size: 36px; margin-bottom: 30px; text-shadow: 0 0 20px #ff6b35; font-weight: bold;">Risk Doctrine</h3>
+                    <div style="background: rgba(255,107,53,0.2); padding: 30px; border-radius: 15px; border: 3px solid #ff6b35; margin-bottom: 50px;">
+                        <p style="text-align: center; color: #ff6b35; font-size: 28px; font-weight: bold; margin-bottom: 25px;">⚠ CAPITAL PRESERVATION IS PARAMOUNT ⚠</p>
+                        <p style="margin-bottom: 15px; font-size: 20px; line-height: 1.6;"><strong style="color: #ffaa00; font-size: 22px;">R1.</strong> Never risk more than you can afford to lose completely</p>
+                        <p style="margin-bottom: 15px; font-size: 20px; line-height: 1.6;"><strong style="color: #ffaa00; font-size: 22px;">R2.</strong> Position sizing must align with the probability of the unknown working against us</p>
+                        <p style="margin-bottom: 15px; font-size: 20px; line-height: 1.6;"><strong style="color: #ffaa00; font-size: 22px;">R3.</strong> When in doubt, reduce position size or step aside entirely</p>
+                        <p style="margin-bottom: 0; font-size: 20px; line-height: 1.6;"><strong style="color: #ffaa00; font-size: 22px;">R4.</strong> Keep detailed records of what worked, what didn't, and what we learned</p>
+                    </div>
+                    
+                    <h3 style="color: #ff6b35; font-size: 36px; margin-bottom: 30px; text-shadow: 0 0 20px #ff6b35; font-weight: bold;">The Unknown Doctrine</h3>
+                    <div style="margin-bottom: 40px; line-height: 2.0; font-size: 20px;">
+                        <p style="margin-bottom: 25px;">We operate in a realm where certainty is illusion and probability is our compass. The Priceworm methodology acknowledges that markets are complex adaptive systems where human psychology, algorithmic behavior, and global events create a tapestry of opportunity and risk.</p>
                         
-                        <p style="margin-bottom: 15px;">Our time-based approach respects the cyclical nature of market participants while remaining humble before the vastness of what we cannot predict or control.</p>
+                        <p style="margin-bottom: 25px;">Our time-based approach respects the cyclical nature of market participants while remaining humble before the vastness of what we cannot predict or control.</p>
                         
-                        <p style="margin-bottom: 20px;">Like the sandworms of distant worlds that sense the smallest vibrations across vast deserts, we attune ourselves to the subtle tremors that precede great market movements at precise moments in time.</p>
+                        <p style="margin-bottom: 30px;">Like the sandworms of distant worlds that sense the smallest vibrations across vast deserts, we attune ourselves to the subtle tremors that precede great market movements at precise moments in time.</p>
                         
-                        <p style="font-style: italic; color: #ffaa00; text-align: center; font-size: 18px;">"In trading, as in the great journeys of legend, the path reveals itself to those who move with purpose, patience, and respect for forces greater than themselves."</p>
+                        <p style="font-style: italic; color: #ffaa00; text-align: center; font-size: 24px; line-height: 1.8; padding: 20px; background: rgba(255,170,0,0.1); border-radius: 15px;">"In trading, as in the great journeys of legend, the path reveals itself to those who move with purpose, patience, and respect for forces greater than themselves."</p>
                     </div>
                     
                 </div>
