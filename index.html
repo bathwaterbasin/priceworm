@@ -40,7 +40,6 @@
             position: relative;
             z-index: 2;
             margin-top: 100vh;
-            background: rgba(0, 0, 0, 0.8);
         }
         
         .wormhole {
@@ -179,6 +178,7 @@
             animation: contentGlow 3s ease-in-out infinite alternate;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(10px);
         }
 
         .content-section::before {
@@ -923,7 +923,7 @@
     </div>
 
     <!-- Footer Section -->
-    <footer style="background: rgba(10, 10, 46, 0.95); padding: 40px 20px; text-align: center; border-top: 2px solid #00ff88; margin-top: 50px; position: relative; overflow: hidden;">
+    <footer style="background: rgba(10, 10, 46, 0.95); padding: 40px 20px; text-align: center; border-top: 2px solid #00ff88; margin-top: 50px; position: relative; overflow: hidden; backdrop-filter: blur(10px);">
         <!-- Animated footer background -->
         <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(45deg, rgba(0, 255, 136, 0.05), rgba(139, 76, 247, 0.05), rgba(255, 107, 53, 0.05)); animation: footerFlow 8s ease infinite; z-index: 0;"></div>
         
