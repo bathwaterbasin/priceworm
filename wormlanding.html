@@ -97,9 +97,26 @@
             }
         }
         
-        @keyframes twinkle {
-            from { opacity: 0.3; }
-            to { opacity: 1; }
+        .portal-link {
+            animation: portalGlow 3s ease-in-out infinite alternate;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .portal-link:hover {
+            filter: drop-shadow(0 0 25px #ff6b35);
+            opacity: 1 !important;
+        }
+        
+        @keyframes portalGlow {
+            from { 
+                filter: drop-shadow(0 0 10px #ff6b35);
+                opacity: 0.7;
+            }
+            to { 
+                filter: drop-shadow(0 0 20px #ffaa00);
+                opacity: 1;
+            }
         }
         
         .segment-1 { animation-delay: 0s; }
@@ -223,6 +240,15 @@
                   fill="#8b4cf7" opacity="0.8">
                 Through the Digital Dimension
             </text>
+            
+            <!-- Bottom link -->
+            <a href="https://t.me/+xVjWoIc81d1mNTEx" target="_blank">
+                <text x="600" y="750" text-anchor="middle" 
+                      font-family="Arial, sans-serif" font-size="18" 
+                      fill="#ff6b35" opacity="0.9" class="portal-link">
+                    The Temporal Wormhole Awaits
+                </text>
+            </a>
             
             <!-- Additional wormhole energy effects -->
             <g transform="translate(600,400)" opacity="0.6">
