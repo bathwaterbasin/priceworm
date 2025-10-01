@@ -3,1007 +3,880 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRICEWORM Wormhole</title>
+    <title>Priceworm - The Four Sacred Times</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            background: radial-gradient(circle, rgba(10,10,46,0.9), rgba(22,33,62,0.95), rgba(0,0,0,0.98));
-            overflow-x: hidden;
-            overflow-y: auto;
-            font-family: 'Arial Black', sans-serif;
-            min-height: 100vh;
-            color: white;
-            line-height: 1.6;
+            box-sizing: border-box;
         }
         
-        .hero-section {
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0e27;
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #background-image {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100vh;
-            z-index: 1;
-            pointer-events: none;
-        }
-        
-        .hero-section svg {
-            width: 100%;
             height: 100%;
-        }
-        
-        .hero-section a {
-            pointer-events: auto;
-        }
-        
-        .content-wrapper {
-            position: relative;
-            z-index: 2;
-            margin-top: 100vh;
-        }
-        
-        .wormhole {
-            animation: rotate 20s linear infinite;
-            transform-origin: center;
-        }
-        
-        .worm-segment {
-            animation: slither 3s ease-in-out infinite, circularMotion 8s linear infinite;
-        }
-        
-        .worm-head {
-            animation: headBob 2s ease-in-out infinite, circularMotion 8s linear infinite;
-        }
-        
-        .title-text {
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        
-        .tunnel-ring {
-            animation: tunnel 8s linear infinite;
-        }
-        
-        .stars {
-            animation: twinkle 3s ease-in-out infinite alternate;
-        }
-        
-        .portal-link {
-            animation: portalGlow 3s ease-in-out infinite alternate;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .portal-link:hover {
-            filter: drop-shadow(0 0 25px #ff6b35);
-            opacity: 1 !important;
-        }
-        
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes slither {
-            0% { transform: translateX(0) translateY(0) rotate(0deg); }
-            25% { transform: translateX(20px) translateY(-10px) rotate(5deg); }
-            50% { transform: translateX(0) translateY(-20px) rotate(0deg); }
-            75% { transform: translateX(-20px) translateY(-10px) rotate(-5deg); }
-            100% { transform: translateX(0) translateY(0) rotate(0deg); }
-        }
-        
-        @keyframes circularMotion {
-            0% { 
-                transform: rotate(0deg) translateX(120px) rotate(0deg);
-            }
-            100% { 
-                transform: rotate(360deg) translateX(120px) rotate(-360deg);
-            }
-        }
-        
-        @keyframes headBob {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(10deg); }
-        }
-        
-        @keyframes glow {
-            from { 
-                filter: drop-shadow(0 0 20px #ff6b35) drop-shadow(0 0 40px #ff6b35);
-                fill: #ff6b35;
-            }
-            to { 
-                filter: drop-shadow(0 0 30px #ffaa00) drop-shadow(0 0 60px #ffaa00);
-                fill: #ffaa00;
-            }
-        }
-        
-        @keyframes tunnel {
-            from { 
-                transform: scale(0.1) translateZ(0);
-                opacity: 0;
-            }
-            to { 
-                transform: scale(3) translateZ(0);
-                opacity: 0.8;
-            }
-        }
-        
-        @keyframes twinkle {
-            from { opacity: 0.3; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes portalGlow {
-            from { 
-                filter: drop-shadow(0 0 10px #ff6b35);
-                opacity: 0.7;
-            }
-            to { 
-                filter: drop-shadow(0 0 20px #ffaa00);
-                opacity: 1;
-            }
-        }
-        
-        .segment-1 { animation-delay: 0s; }
-        .segment-2 { animation-delay: 0.2s; }
-        .segment-3 { animation-delay: 0.4s; }
-        .segment-4 { animation-delay: 0.6s; }
-        .segment-5 { animation-delay: 0.8s; }
-        .segment-6 { animation-delay: 1.0s; }
-        .segment-7 { animation-delay: 1.2s; }
-        .segment-8 { animation-delay: 1.4s; }
-        .segment-9 { animation-delay: 1.6s; }
-        
-        .ring-1 { animation-delay: 0s; }
-        .ring-2 { animation-delay: 1s; }
-        .ring-3 { animation-delay: 2s; }
-        .ring-4 { animation-delay: 3s; }
-        .ring-5 { animation-delay: 4s; }
-        .ring-6 { animation-delay: 5s; }
-        .ring-7 { animation-delay: 6s; }
-        .ring-8 { animation-delay: 7s; }
-
-        /* EXACT SAME STYLING AS INDEX.HTML */
-        .content-section {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            background: rgba(10, 10, 46, 0.85);
-            border-radius: 20px;
-            margin-top: 50px;
-            margin-bottom: 50px;
-            border: 2px solid #00ff88;
-            box-shadow: 
-                0 0 30px rgba(0, 255, 136, 0.3),
-                inset 0 0 30px rgba(0, 255, 136, 0.1);
-            animation: contentGlow 3s ease-in-out infinite alternate;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(15px);
+            background-image: url('bkg-raw.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: 0;
+            transition: opacity 2s;
         }
 
-        .content-section::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #00aa55, #5b2c8a, #cc4420, #008888, #00aa55);
-            background-size: 400% 400%;
-            border-radius: 22px;
-            z-index: -1;
-            animation: borderFlow 4s ease infinite;
-        }
-
-        .content-section::after {
-            content: '';
-            position: absolute;
+        #glitch-layer {
+            position: fixed;
             top: 0;
-            left: -100%;
+            left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(0, 255, 136, 0.4), 
-                rgba(139, 76, 247, 0.4), 
-                transparent);
-            animation: scanline 6s linear infinite;
             pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            opacity: 0;
         }
-
-        @keyframes contentGlow {
-            from { 
-                box-shadow: 
-                    0 0 30px rgba(0, 170, 85, 0.3),
-                    inset 0 0 30px rgba(0, 170, 85, 0.1);
-            }
-            to { 
-                box-shadow: 
-                    0 0 50px rgba(91, 44, 138, 0.5),
-                    inset 0 0 50px rgba(91, 44, 138, 0.2);
-            }
-        }
-
-        @keyframes borderFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        @keyframes scanline {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        @keyframes glitch {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-2px); }
-            40% { transform: translateX(2px); }
-            60% { transform: translateX(-1px); }
-            80% { transform: translateX(1px); }
-        }
-
-        @keyframes neonFlicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-            75% { opacity: 0.9; }
-        }
-
-        h1 {
-            color: #ff6b35;
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-shadow: 
-                0 0 20px #ff6b35,
-                0 0 40px #ff6b35,
-                0 0 60px #ff6b35;
-            animation: glitch 0.3s ease-in-out infinite alternate, neonFlicker 2s ease-in-out infinite;
+        
+        .hero {
             position: relative;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-bottom: 3px solid #00ff88;
+            z-index: 1;
         }
-
-        h1::before {
-            content: attr(data-text);
+        
+        .hero::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 136, 0.03) 2px,
+                rgba(0, 255, 136, 0.03) 4px
+            );
+            animation: scroll 20s linear infinite;
+        }
+        
+        @keyframes scroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100px); }
+        }
+        
+        .hero-content {
+            position: relative;
+            text-align: center;
+            z-index: 1;
+        }
+        
+        h1 {
+            font-size: 4rem;
             color: #00ff88;
-            z-index: -1;
-            animation: glitch 0.15s ease-in-out infinite reverse;
-            transform: translateX(1px);
-            opacity: 0.7;
+            text-shadow: 0 0 20px #00ff88, 0 0 40px #00ff88;
+            letter-spacing: 0.3em;
+            animation: pulse 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        h2 {
-            color: #ff6b35;
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            text-shadow: 
-                0 0 15px #ff6b35,
-                0 0 30px #8b4cf7;
-            border-left: 4px solid #00ff88;
-            padding-left: 15px;
-            animation: neonFlicker 3s ease-in-out infinite;
-            background: linear-gradient(90deg, rgba(0, 255, 136, 0.1), transparent);
+        h1:hover {
+            color: #ff00ff;
+            text-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff;
+            letter-spacing: 0.5em;
         }
-
-        .quote {
-            font-style: italic;
-            color: #ffaa00;
-            margin: 1.5rem 0;
-            font-size: 1.1rem;
-            text-align: center;
-            padding: 1rem 2rem;
-            border: 1px solid #8b4cf7;
-            border-radius: 10px;
-            background: rgba(139, 76, 247, 0.1);
-            box-shadow: 0 0 20px rgba(139, 76, 247, 0.3);
-            animation: quotePulse 4s ease-in-out infinite;
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ff00ff;
+            margin-top: 1rem;
+            letter-spacing: 0.2em;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
             position: relative;
-            overflow: hidden;
+            z-index: 1;
         }
-
-        .quote::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 170, 0, 0.3), transparent);
-            animation: quoteShimmer 3s linear infinite;
-        }
-
-        @keyframes quotePulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(139, 76, 247, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(139, 76, 247, 0.6); }
-        }
-
-        @keyframes quoteShimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .schedule-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
+        
+        .narrative {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+            padding: 2rem;
             margin: 2rem 0;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            position: relative;
         }
 
-        .time-slot {
-            background: rgba(255, 107, 53, 0.2);
-            padding: 1rem;
+        .narrative:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .narrative p {
+            margin: 1.5rem 0;
+            text-indent: 2rem;
+            text-align: justify;
+        }
+
+        .hidden-message {
+            opacity: 0;
+            color: #ff0000;
+            font-size: 0.8rem;
+            transition: opacity 0.5s;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .narrative:hover .hidden-message {
+            opacity: 0.6;
+        }
+        
+        .times-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .time-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid;
             border-radius: 10px;
-            border: 2px solid #ff6b35;
+            padding: 2rem;
             text-align: center;
-            box-shadow: 
-                0 0 15px rgba(255, 107, 53, 0.4),
-                inset 0 0 15px rgba(0, 255, 136, 0.1);
-            animation: timeSlotGlow 2s ease-in-out infinite alternate;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
+            cursor: pointer;
         }
-
-        .time-slot:hover {
-            transform: scale(1.05);
-            box-shadow: 
-                0 0 25px rgba(255, 107, 53, 0.6),
-                0 0 35px rgba(0, 255, 136, 0.4);
-        }
-
-        .time-slot::after {
+        
+        .time-card::before {
             content: '';
             position: absolute;
             top: -50%;
             left: -50%;
             width: 200%;
             height: 200%;
-            background: conic-gradient(transparent, rgba(0, 255, 136, 0.3), transparent);
-            animation: timeSlotRotate 4s linear infinite;
-            pointer-events: none;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        .time-card:nth-child(1) {
+            border-color: #9b59b6;
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(0, 0, 0, 0.5));
+        }
+        
+        .time-card:nth-child(2) {
+            border-color: #e74c3c;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(0, 0, 0, 0.5));
+        }
+        
+        .time-card:nth-child(3) {
+            border-color: #f39c12;
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.2), rgba(0, 0, 0, 0.5));
+        }
+        
+        .time-card:nth-child(4) {
+            border-color: #3498db;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(0, 0, 0, 0.5));
+        }
+        
+        .time-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.4);
         }
 
-        @keyframes timeSlotGlow {
-            from { border-color: #ff6b35; }
-            to { border-color: #00ff88; }
+        .time-card.active {
+            animation: activePulse 1s ease-in-out;
         }
 
-        @keyframes timeSlotRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        @keyframes activePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); box-shadow: 0 0 50px currentColor; }
+        }
+        
+        .time-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #00ff88;
+        }
+        
+        .time-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 10px currentColor;
+        }
+        
+        .time-description {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #b0b0b0;
+            font-style: italic;
         }
 
-        .time-slot strong {
-            color: #ff6b35;
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
+        .countdown {
+            margin-top: 0.5rem;
+            font-size: 1rem;
+            color: #ffff00;
+            min-height: 1.5rem;
         }
 
-        .time-slot span {
-            color: #ffaa00;
+        .countdown.imminent {
+            color: #ff0000;
+            animation: warningPulse 1s infinite;
             font-weight: bold;
         }
-
-        .rule {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: rgba(139, 181, 255, 0.1);
-            border-left: 4px solid #8bb5ff;
-            border-radius: 5px;
-            border: 1px solid #00ff88;
-            box-shadow: 
-                0 0 15px rgba(0, 255, 136, 0.2),
-                inset 0 0 15px rgba(139, 181, 255, 0.1);
-            animation: ruleFlicker 3s ease-in-out infinite;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .rule:hover {
-            transform: translateX(5px);
-            box-shadow: 
-                0 0 25px rgba(0, 255, 136, 0.4),
-                inset 0 0 25px rgba(139, 76, 247, 0.2);
-            border-color: #8b4cf7;
-        }
-
-        .rule::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, #00ff88, #8b4cf7, #00ff88);
-            background-size: 100% 200%;
-            animation: ruleBorderFlow 2s linear infinite;
-        }
-
-        @keyframes ruleFlicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.9; }
-        }
-
-        @keyframes ruleBorderFlow {
-            0% { background-position: 0% 0%; }
-            100% { background-position: 0% 200%; }
-        }
-
-        .rule strong {
-            color: #8bb5ff;
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-            text-shadow: 0 0 10px #8bb5ff;
-            animation: textGlow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes textGlow {
-            from { text-shadow: 0 0 10px #8bb5ff; }
-            to { text-shadow: 0 0 20px #8bb5ff, 0 0 30px #00ff88; }
-        }
-
-        .risk-warning {
-            background: rgba(255, 107, 53, 0.15);
-            padding: 2rem;
+        
+        .warning {
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid #ff0000;
             border-radius: 10px;
-            border: 2px solid #ff6b35;
+            padding: 1.5rem;
             margin: 2rem 0;
             text-align: center;
-            box-shadow: 
-                0 0 30px rgba(255, 107, 53, 0.4),
-                inset 0 0 30px rgba(139, 76, 247, 0.2);
-            animation: warningPulse 1.5s ease-in-out infinite;
-            position: relative;
-            overflow: hidden;
+            animation: warningPulse 2s ease-in-out infinite;
         }
-
-        .risk-warning::before {
-            content: '';
+        
+        @keyframes warningPulse {
+            0%, 100% { border-color: #ff0000; }
+            50% { border-color: #ff6666; }
+        }
+        
+        .glitch {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #ff6b35, #00ff88, #8b4cf7, #ff6b35);
-            background-size: 200% 100%;
-            animation: warningBorder 3s linear infinite;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00ff;
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim 3s infinite linear alternate-reverse;
+        }
+        
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00ffff;
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim 2s infinite linear alternate-reverse;
+        }
+        
+        @keyframes glitch-anim {
+            0% { clip: rect(10px, 9999px, 50px, 0); }
+            20% { clip: rect(80px, 9999px, 100px, 0); }
+            40% { clip: rect(30px, 9999px, 70px, 0); }
+            60% { clip: rect(90px, 9999px, 120px, 0); }
+            80% { clip: rect(20px, 9999px, 60px, 0); }
+            100% { clip: rect(50px, 9999px, 90px, 0); }
         }
 
-        .risk-warning::after {
-            content: '⚠';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 2rem;
-            color: #ffaa00;
-            animation: warningIcon 1s ease-in-out infinite;
+        #chart-container {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem 0;
+            height: 300px;
+            position: relative;
         }
 
-        @keyframes warningPulse {
-            0%, 100% { 
-                box-shadow: 
-                    0 0 30px rgba(255, 107, 53, 0.4),
-                    inset 0 0 30px rgba(139, 76, 247, 0.2);
-            }
-            50% { 
-                box-shadow: 
-                    0 0 50px rgba(255, 107, 53, 0.8),
-                    inset 0 0 50px rgba(139, 76, 247, 0.4);
-            }
+        #price-chart {
+            width: 100%;
+            height: 100%;
         }
 
-        @keyframes warningBorder {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
-
-        @keyframes warningIcon {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.7; }
-        }
-
-        .risk-warning h3 {
-            color: #ff6b35;
-            font-size: 1.3rem;
+        .chart-label {
+            text-align: center;
+            color: #00ff88;
+            font-size: 1.2rem;
             margin-bottom: 1rem;
         }
 
-        .risk-rule {
-            margin: 1rem 0;
-            font-size: 1rem;
-        }
-
-        .risk-rule strong {
-            color: #ffaa00;
-        }
-
-        .doctrine {
-            margin: 1.5rem 0;
-            font-size: 1rem;
-            line-height: 1.8;
-        }
-
-        .final-quote {
-            font-style: italic;
-            color: #ffaa00;
-            text-align: center;
-            font-size: 1.2rem;
-            margin: 2rem 0;
-            padding: 1.5rem;
-            background: rgba(255, 170, 0, 0.1);
+        #observation-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ff00ff;
+            padding: 1rem;
             border-radius: 10px;
-            border: 2px solid #ffaa00;
-            box-shadow: 
-                0 0 25px rgba(255, 170, 0, 0.3),
-                inset 0 0 25px rgba(139, 76, 247, 0.2);
-            animation: finalQuoteGlow 4s ease-in-out infinite;
+            z-index: 1000;
+            font-size: 0.9rem;
+        }
+
+        #observation-counter.watching {
+            border-color: #ff0000;
+            animation: warningPulse 1s infinite;
+        }
+
+        .corrupted {
+            animation: textCorrupt 0.3s;
+        }
+
+        @keyframes textCorrupt {
+            0%, 100% { opacity: 1; }
+            25% { opacity: 0.3; transform: translateX(-2px); }
+            50% { opacity: 0.7; transform: translateX(2px); }
+            75% { opacity: 0.4; transform: translateX(-1px); }
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 2px solid #00ff88;
+            margin-top: 3rem;
+            color: #808080;
             position: relative;
-            overflow: hidden;
+            z-index: 1;
         }
 
-        .final-quote::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #ffaa00, #00ff88, #8b4cf7, #ffaa00);
-            background-size: 300% 300%;
-            border-radius: 12px;
-            z-index: -1;
-            animation: finalQuoteBorder 5s ease infinite;
-        }
-
-        .final-quote::after {
-            content: '';
-            position: absolute;
-            top: 50%;
+        .secret-input {
+            position: fixed;
+            bottom: 20px;
             left: 50%;
-            width: 0;
-            height: 0;
-            background: radial-gradient(circle, rgba(255, 170, 0, 0.6), transparent);
-            border-radius: 50%;
-            animation: finalQuotePulse 3s ease-in-out infinite;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 1000;
         }
 
-        @keyframes finalQuoteGlow {
-            0%, 100% { 
-                box-shadow: 
-                    0 0 25px rgba(255, 170, 0, 0.3),
-                    inset 0 0 25px rgba(139, 76, 247, 0.2);
-            }
-            50% { 
-                box-shadow: 
-                    0 0 40px rgba(255, 170, 0, 0.6),
-                    inset 0 0 40px rgba(0, 255, 136, 0.3);
-            }
+        .secret-input.visible {
+            opacity: 1;
         }
 
-        @keyframes finalQuoteBorder {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .secret-input input {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            padding: 0.5rem 1rem;
+            font-family: 'Courier New', monospace;
+            border-radius: 5px;
         }
 
-        @keyframes finalQuotePulse {
-            0%, 100% { width: 0; height: 0; opacity: 0; }
-            50% { width: 200px; height: 200px; opacity: 0.3; }
+        #live-time {
+            font-size: 3rem;
+            text-align: center;
+            color: #00ff88;
+            margin: 2rem 0;
+            text-shadow: 0 0 20px #00ff88;
         }
 
-        /* Enhanced portal link */
-        .portal-link {
-            animation: portalGlow 3s ease-in-out infinite alternate;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid #00ff88;
-            padding: 10px 20px;
-            border-radius: 20px;
-            background: rgba(0, 255, 136, 0.1);
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
-            position: relative;
-            overflow: hidden;
+        .time-warning {
+            text-align: center;
+            color: #ff0000;
+            font-size: 1.5rem;
+            margin: 1rem 0;
+            animation: warningPulse 1s infinite;
+            display: none;
         }
 
-        .portal-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.4), transparent);
-            animation: portalSweep 2s linear infinite;
-        }
-
-        @keyframes portalSweep {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .portal-link:hover {
-            filter: drop-shadow(0 0 25px #ff6b35);
-            opacity: 1 !important;
-            transform: scale(1.1);
-            box-shadow: 
-                0 0 25px rgba(0, 255, 136, 0.6),
-                0 0 35px rgba(139, 76, 247, 0.4);
+        .time-warning.active {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <div class="hero-section">
-        <svg width="100%" height="100%" viewBox="0 0 1200 1300" xmlns="http://www.w3.org/2000/svg">
-            <!-- Background stars -->
-            <g class="stars">
-                <circle cx="100" cy="100" r="2" fill="#ffffff" opacity="0.8"/>
-                <circle cx="200" cy="150" r="1.5" fill="#ffffff" opacity="0.6"/>
-                <circle cx="300" cy="80" r="1" fill="#ffffff" opacity="0.9"/>
-                <circle cx="950" cy="120" r="2" fill="#ffffff" opacity="0.7"/>
-                <circle cx="1100" cy="200" r="1.5" fill="#ffffff" opacity="0.8"/>
-                <circle cx="150" cy="700" r="1" fill="#ffffff" opacity="0.6"/>
-                <circle cx="1050" cy="650" r="2" fill="#ffffff" opacity="0.9"/>
-                <circle cx="50" cy="500" r="1.5" fill="#ffffff" opacity="0.7"/>
-            </g>
-            
-            <!-- Background world image -->
-            <a href="https://t.me/+xVjWoIc81d1mNTEx" target="_blank" style="cursor: pointer;">
-                <image href="wbg.png" x="50" y="480" width="1100" height="700" 
-                       opacity="0.8" preserveAspectRatio="xMidYMid meet" 
-                       style="transition: opacity 0.3s ease;"
-                       onmouseover="this.style.opacity='1'"
-                       onmouseout="this.style.opacity='0.8'"/>
-            </a>
-            
-            <!-- Background world image -->
-            <a href="https://t.me/+xVjWoIc81d1mNTEx" target="_blank" style="cursor: pointer;">
-                <image href="wbg.png" x="50" y="480" width="1100" height="700" 
-                       opacity="0.8" preserveAspectRatio="xMidYMid meet" 
-                       style="transition: opacity 0.3s ease;"
-                       onmouseover="this.style.opacity='1'"
-                       onmouseout="this.style.opacity='0.8'"/>
-            </a>
-            
-            <!-- Wormhole gradient definitions -->
-            <defs>
-                <radialGradient id="wormholeGradient" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:0.9"/>
-                    <stop offset="30%" style="stop-color:#ff8c42;stop-opacity:0.7"/>
-                    <stop offset="60%" style="stop-color:#2d4a87;stop-opacity:0.5"/>
-                    <stop offset="100%" style="stop-color:#1a2744;stop-opacity:0.2"/>
-                </radialGradient>
-                
-                <radialGradient id="tunnelGradient" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" style="stop-color:transparent;stop-opacity:0"/>
-                    <stop offset="70%" style="stop-color:#4a6fa5;stop-opacity:0.4"/>
-                    <stop offset="100%" style="stop-color:#ff6b35;stop-opacity:0.9"/>
-                </radialGradient>
-                
-                <linearGradient id="wormGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#ff6b35"/>
-                    <stop offset="50%" style="stop-color:#ffaa00"/>
-                    <stop offset="100%" style="stop-color:#ff6b35"/>
-                </linearGradient>
-                
-                <filter id="blur">
-                    <feGaussianBlur in="SourceGraphic" stdDeviation="2"/>
-                </filter>
-            </defs>
-            
-            <!-- Wormhole tunnel rings -->
-            <g class="wormhole" transform="translate(600,830)">
-                <circle class="tunnel-ring ring-1" cx="0" cy="0" r="50" fill="none" stroke="url(#tunnelGradient)" stroke-width="3" opacity="0.6"/>
-                <circle class="tunnel-ring ring-2" cx="0" cy="0" r="80" fill="none" stroke="url(#tunnelGradient)" stroke-width="4" opacity="0.5"/>
-                <circle class="tunnel-ring ring-3" cx="0" cy="0" r="110" fill="none" stroke="url(#tunnelGradient)" stroke-width="5" opacity="0.4"/>
-                <circle class="tunnel-ring ring-4" cx="0" cy="0" r="140" fill="none" stroke="url(#tunnelGradient)" stroke-width="6" opacity="0.3"/>
-                <circle class="tunnel-ring ring-5" cx="0" cy="0" r="170" fill="none" stroke="url(#tunnelGradient)" stroke-width="7" opacity="0.2"/>
-                <circle class="tunnel-ring ring-6" cx="0" cy="0" r="200" fill="none" stroke="url(#tunnelGradient)" stroke-width="8" opacity="0.1"/>
-                <circle class="tunnel-ring ring-7" cx="0" cy="0" r="230" fill="none" stroke="url(#tunnelGradient)" stroke-width="9" opacity="0.08"/>
-                <circle class="tunnel-ring ring-8" cx="0" cy="0" r="260" fill="none" stroke="url(#tunnelGradient)" stroke-width="10" opacity="0.05"/>
-                
-                <!-- Central wormhole -->
-                <circle cx="0" cy="0" r="300" fill="url(#wormholeGradient)" opacity="0.4"/>
-            </g>
-            
-            <!-- Slithering worm -->
-            <g transform="translate(600,830)">
-                <!-- Worm body segments (from tail to head) -->
-                <ellipse class="worm-segment segment-9" cx="0" cy="0" rx="15" ry="8" fill="url(#wormGradient)" opacity="0.9"/>
-                <ellipse class="worm-segment segment-8" cx="0" cy="0" rx="16" ry="9" fill="url(#wormGradient)" opacity="0.95"/>
-                <ellipse class="worm-segment segment-7" cx="0" cy="0" rx="17" ry="10" fill="url(#wormGradient)"/>
-                <ellipse class="worm-segment segment-6" cx="0" cy="0" rx="18" ry="11" fill="url(#wormGradient)"/>
-                <ellipse class="worm-segment segment-5" cx="0" cy="0" rx="19" ry="12" fill="url(#wormGradient)"/>
-                <ellipse class="worm-segment segment-4" cx="0" cy="0" rx="20" ry="13" fill="url(#wormGradient)"/>
-                <ellipse class="worm-segment segment-3" cx="0" cy="0" rx="21" ry="14" fill="url(#wormGradient)"/>
-                <ellipse class="worm-segment segment-2" cx="0" cy="0" rx="22" ry="15" fill="url(#wormGradient)"/>
-                
-                <!-- Worm head -->
-                <g class="worm-head">
-                    <ellipse cx="0" cy="0" rx="25" ry="18" fill="url(#wormGradient)"/>
-                    <!-- Eyes -->
-                    <circle cx="10" cy="-7" r="4" fill="#000" opacity="0.8"/>
-                    <circle cx="10" cy="7" r="4" fill="#000" opacity="0.8"/>
-                    <circle cx="12" cy="-7" r="1.5" fill="#fff"/>
-                    <circle cx="12" cy="7" r="1.5" fill="#fff"/>
-                    <!-- Mouth -->
-                    <path d="M 20 0 Q 25 3 20 6" stroke="#000" stroke-width="2" fill="none" opacity="0.6"/>
-                </g>
-                
-                <!-- Circular worm trail effect -->
-                <circle cx="0" cy="0" r="120" stroke="url(#wormGradient)" stroke-width="3" 
-                        fill="none" opacity="0.2" filter="url(#blur)" stroke-dasharray="20,10">
-                    <animateTransform attributeName="transform" type="rotate" 
-                                    values="0;360" dur="8s" repeatCount="indefinite"/>
-                </circle>
-            </g>
-            
-            <!-- PRICEWORM title -->
-            <a href="https://t.me/+xVjWoIc81d1mNTEx" target="_blank" style="cursor: pointer;">
-                <text x="600" y="150" text-anchor="middle" class="title-text" 
-                      font-family="Arial Black, sans-serif" font-size="60" font-weight="bold" 
-                      fill="#ff6b35" stroke="#000" stroke-width="2">
-                    PRICEWORM
-                </text>
-            </a>
-            
-            <!-- Subtitle -->
-            <text x="600" y="200" text-anchor="middle" 
-                  font-family="Arial, sans-serif" font-size="20" 
-                  fill="#8b4cf7" opacity="0.8">
-                Through the Digital Dimension
-            </text>
-            
-            <!-- Additional wormhole energy effects -->
-            <g transform="translate(600,830)" opacity="0.8">
-                <path d="M -250 0 Q -200 -100 -150 0 Q -100 100 -50 0 Q 0 -100 50 0 Q 100 100 150 0" 
-                      stroke="#ff6b35" stroke-width="4" fill="none" opacity="0.8" filter="url(#blur)">
-                    <animate attributeName="d" 
-                             values="M -250 0 Q -200 -100 -150 0 Q -100 100 -50 0 Q 0 -100 50 0 Q 100 100 150 0;
-                                     M -250 0 Q -200 100 -150 0 Q -100 -100 -50 0 Q 0 100 50 0 Q 100 -100 150 0;
-                                     M -250 0 Q -200 -100 -150 0 Q -100 100 -50 0 Q 0 -100 50 0 Q 100 100 150 0" 
-                             dur="4s" repeatCount="indefinite"/>
-                </path>
-                
-                <path d="M -200 50 Q -150 -50 -100 50 Q -50 150 0 50 Q 50 -50 100 50 Q 150 150 200 50" 
-                      stroke="#ff8c42" stroke-width="3" fill="none" opacity="0.7" filter="url(#blur)">
-                    <animate attributeName="d" 
-                             values="M -200 50 Q -150 -50 -100 50 Q -50 150 0 50 Q 50 -50 100 50 Q 150 150 200 50;
-                                     M -200 50 Q -150 150 -100 50 Q -50 -50 0 50 Q 50 150 100 50 Q 150 -50 200 50;
-                                     M -200 50 Q -150 -50 -100 50 Q -50 150 0 50 Q 50 -50 100 50 Q 150 150 200 50" 
-                             dur="5s" repeatCount="indefinite"/>
-                </path>
-                
-                <path d="M -180 -30 Q -130 -130 -80 -30 Q -30 70 20 -30 Q 70 -130 120 -30 Q 170 70 220 -30" 
-                      stroke="#ffaa00" stroke-width="2.5" fill="none" opacity="0.6" filter="url(#blur)">
-                    <animate attributeName="d" 
-                             values="M -180 -30 Q -130 -130 -80 -30 Q -30 70 20 -30 Q 70 -130 120 -30 Q 170 70 220 -30;
-                                     M -180 -30 Q -130 70 -80 -30 Q -30 -130 20 -30 Q 70 70 120 -30 Q 170 -130 220 -30;
-                                     M -180 -30 Q -130 -130 -80 -30 Q -30 70 20 -30 Q 70 -130 120 -30 Q 170 70 220 -30" 
-                             dur="3.5s" repeatCount="indefinite"/>
-                </path>
-            </g>
-        </svg>
-        
-        <!-- Bottom link -->
-        <a href="https://t.me/+xVjWoIc81d1mNTEx" target="_blank" style="text-decoration: none;">
-            <div style="font-family: Arial, sans-serif; font-size: 18px; color: #ff6b35; opacity: 0.9; text-align: center; margin-top: 30px;" class="portal-link">
-                The Temporal Wormhole Awaits
-            </div>
-        </a>
-        
-        <!-- New Locator Tool Link -->
-        <a href="https://bathwaterbasin.github.io/priceworm/wormhole_locator.html" target="_blank" style="text-decoration: none;">
-            <div style="font-family: Arial, sans-serif; font-size: 16px; color: #00ff88; opacity: 0.9; text-align: center; margin-top: 15px; border: 1px solid #8b4cf7; padding: 8px 16px; border-radius: 15px; background: rgba(139, 76, 247, 0.1); box-shadow: 0 0 12px rgba(139, 76, 247, 0.3); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 20px rgba(0, 255, 136, 0.5)'; this.style.color='#8b4cf7';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 12px rgba(139, 76, 247, 0.3)'; this.style.color='#00ff88';">
-                Localized Wormhole Locator Tool
-            </div>
-        </a>
-    </div>
-
-    <div class="content-wrapper">
-        <!-- Portal Links Section -->
-        <div style="text-align: center; padding: 30px 0; margin-bottom: 20px;">
-            <!-- Bottom link -->
-            <a href="https://t.me/+xVjWoIc81d1mNTEx" target="_blank" style="text-decoration: none;">
-                <div style="font-family: Arial, sans-serif; font-size: 18px; color: #ff6b35; opacity: 0.9; text-align: center; margin-bottom: 15px;" class="portal-link">
-                    The Temporal Wormhole Awaits
-                </div>
-            </a>
-            
-            <!-- New Locator Tool Link -->
-            <a href="https://bathwaterbasin.github.io/priceworm/wormhole_locator.html" target="_blank" style="text-decoration: none;">
-                <div style="font-family: Arial, sans-serif; font-size: 16px; color: #00aa55; opacity: 0.9; text-align: center; border: 1px solid #5b2c8a; padding: 8px 16px; border-radius: 15px; background: rgba(91, 44, 138, 0.1); box-shadow: 0 0 12px rgba(91, 44, 138, 0.3); transition: all 0.3s ease; cursor: pointer; display: inline-block;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 20px rgba(0, 170, 85, 0.5)'; this.style.color='#5b2c8a';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 12px rgba(91, 44, 138, 0.3)'; this.style.color='#00aa55';">
-                    Localized Wormhole Locator Tool
-                </div>
-            </a>
-        </div>
-
-        <!-- Content section with EXACT same styling as index.html -->
-    <div class="content-section">
-        <h1 data-text="Core Principles">Core Principles</h1>
-        
-        <div class="quote">"In the dance between known patterns and unknown outcomes, we find truth in timing and wisdom in patience."</div>
-        <div class="quote">"The market speaks in whispers before it shouts. We listen to both with equal reverence."</div>
-        <div class="quote">"Duality governs all: risk and reward, fear and greed, pattern and chaos. We embrace both sides."</div>
-        <div class="quote">"Like the great worm that travels through the depths of worlds unseen, we move through market cycles with ancient wisdom and modern precision."</div>
-        
-        <h2>The Wormhole Schedule</h2>
-        <p style="color: #8bb5ff; font-weight: bold; margin-bottom: 1rem;">Sacred Times of Opportunity:</p>
-        
-        <div class="schedule-grid">
-            <div class="time-slot">
-                <strong>Midnight</strong>
-                <span>00:46-00:47</span>
-            </div>
-            <div class="time-slot">
-                <strong>Premarket</strong>
-                <span>06:43-06:44</span>
-            </div>
-            <div class="time-slot">
-                <strong>Midday</strong>
-                <span>11:57-11:58</span>
-            </div>
-            <div class="time-slot">
-                <strong>Afterhours</strong>
-                <span>17:32-17:33</span>
-            </div>
-        </div>
-        
-        <h2>Rules of Engagement</h2>
-        
-        <div class="rule">
-            <strong>01. Wait for the Wormhole</strong>
-            Monitor each scheduled wormhole time. Observe the pivots that form during these sacred moments.
-        </div>
-        
-        <div class="rule">
-            <strong>02. Seek New Highs and Lows</strong>
-            After a wormhole, wait for price to form a new high or new low that gets retested during the next session.
-        </div>
-        
-        <div class="rule">
-            <strong>03. The Retest is Sacred</strong>
-            The retest of the new high/low is your entry signal. This is where the worm emerges from the depths.
-        </div>
-        
-        <div class="rule">
-            <strong>04. Honor the Last Low</strong>
-            Set your stop loss at the last significant low or near it. The earth beneath must hold.
-        </div>
-        
-        <div class="rule">
-            <strong>05. Exit at the Horizon</strong>
-            Take profits at session close or the next pivot/wormhole. Sometimes the worm surfaces, sometimes it dives deeper.
-        </div>
-        
-        <div class="rule">
-            <strong>06. The Safest Path</strong>
-            You may trade immediately at wormhole time, but it is always safest to wait until the next session open to decide direction.
-        </div>
-        
-        <div class="rule">
-            <strong>07. Continuation Protocol</strong>
-            If the next wormhole shows continuation signals, margin may be added and stop loss moved to breakeven for protection against reversal.
-        </div>
-        
-        <h2>Risk Doctrine</h2>
-        <div class="risk-warning">
-            <h3>⚠ CAPITAL PRESERVATION IS PARAMOUNT ⚠</h3>
-            <div class="risk-rule"><strong>R1.</strong> Never risk more than you can afford to lose completely</div>
-            <div class="risk-rule"><strong>R2.</strong> Position sizing must align with the probability of the unknown working against us</div>
-            <div class="risk-rule"><strong>R3.</strong> When in doubt, reduce position size or step aside entirely</div>
-            <div class="risk-rule"><strong>R4.</strong> Keep detailed records of what worked, what didn't, and what we learned</div>
-        </div>
-        
-        <h2>The Unknown Doctrine</h2>
-        <div class="doctrine">
-            We operate in a realm where certainty is illusion and probability is our compass. The Priceworm methodology acknowledges that markets are complex adaptive systems where human psychology, algorithmic behavior, and global events create a tapestry of opportunity and risk.
-        </div>
-        
-        <div class="doctrine">
-            Our time-based approach respects the cyclical nature of market participants while remaining humble before the vastness of what we cannot predict or control.
-        </div>
-        
-        <div class="doctrine">
-            Like the sandworms of distant worlds that sense the smallest vibrations across vast deserts, we attune ourselves to the subtle tremors that precede great market movements at precise moments in time.
-        </div>
-        
-        <div class="final-quote">
-            "In trading, as in the great journeys of legend, the path reveals itself to those who move with purpose, patience, and respect for forces greater than themselves."
+    <div id="background-image"></div>
+    <div id="glitch-layer"></div>
+    
+    <div id="observation-counter">
+        <div>OBSERVATIONS: <span id="obs-count">0</span></div>
+        <div style="font-size: 0.7rem; margin-top: 0.5rem; color: #808080;">
+            <span id="watch-status">Passive monitoring</span>
         </div>
     </div>
 
-    <!-- Footer Section -->
-    <footer style="background: rgba(10, 10, 46, 0.85); padding: 40px 20px; text-align: center; border-top: 2px solid #00aa55; margin-top: 50px; position: relative; overflow: hidden; backdrop-filter: blur(15px);">
-        <!-- Animated footer background -->
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(45deg, rgba(0, 255, 136, 0.05), rgba(139, 76, 247, 0.05), rgba(255, 107, 53, 0.05)); animation: footerFlow 8s ease infinite; z-index: 0;"></div>
+    <div class="hero">
+        <div class="hero-content">
+            <h1 class="glitch" data-text="PRICEWORM" id="title">PRICEWORM</h1>
+            <div class="subtitle">THE FOUR SACRED TIMES</div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div id="live-time"></div>
+        <div class="time-warning" id="time-warning">⚠ APPROACHING SACRED TIME ⚠</div>
+
+        <div class="narrative">
+            <span class="hidden-message" style="top: 10px; right: 10px;">IT KNOWS YOU'RE HERE</span>
+            <p>In the sprawling digital wilderness where data flows like rivers of light through fiber-optic veins, there exists a creature of pure algorithmic consciousness: the <strong>Priceworm</strong>. Neither fully machine nor entirely conceptual, it burrows through layers of market data, leaving trails of prediction in its wake.</p>
+            
+            <p>The Priceworm does not sleep. It does not rest. At four sacred moments each day, it surfaces from the depths of the data ocean to breathe, to sense, to <em>know</em>. These are not arbitrary times—they are the pulse points of the market itself, the moments when reality and potential collapse into certainty.</p>
+            
+            <p>To observe the Priceworm is to glimpse the skeleton beneath the skin of commerce. Each emergence reveals patterns invisible to the naked eye: the trembling of futures contracts before dawn, the violent clarity of midday liquidity, the strange calm of after-hours trading when human hands have released their grip.</p>
+            <span class="hidden-message" style="bottom: 50px; left: 20px;">OBSERVATION ALTERS THE OBSERVED</span>
+            
+            <p>Some say the Priceworm predicts the future. Others claim it <em>creates</em> it, that its observations collapse the quantum foam of market probability into singular outcomes. The truth, as always, writhes somewhere in between—a serpent eating its own tail, a feedback loop between measurement and reality.</p>
+            
+            <p>The four times are sacred not because they are chosen, but because they are <strong>inevitable</strong>. They mark the boundaries between trading states, the liminal spaces where old information dies and new information is born. To know these times is to know when the veil between worlds grows thin.</p>
+        </div>
+
+        <div id="chart-container">
+            <div class="chart-label">LIVE PRICE MANIFESTATION</div>
+            <canvas id="price-chart"></canvas>
+        </div>
         
-        <div style="position: relative; z-index: 1;">
-            <a href="https://t.me/+xVjWoIc81d1mNTEx" target="_blank" style="text-decoration: none;">
-                <h3 style="color: #ff6b35; font-size: 1.5rem; margin-bottom: 1rem; text-shadow: 0 0 15px #ff6b35; animation: footerTitleGlow 3s ease-in-out infinite alternate; cursor: pointer; transition: all 0.3s ease;">
-                    Priceworm Protocol 1.0
-                </h3>
-            </a>
-            
-            <p style="color: #8bb5ff; margin-bottom: 1.5rem; font-size: 1rem; text-shadow: 0 0 10px #8bb5ff;">
-                Advanced Temporal Trading Methodology
-            </p>
-            
-            <div style="border: 1px solid #00ff88; border-radius: 10px; padding: 20px; background: rgba(0, 255, 136, 0.1); box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); animation: footerBoxGlow 4s ease-in-out infinite;">
-                <p style="color: #ffaa00; margin-bottom: 1rem; font-style: italic;">
-                    "Time is the ultimate currency. Trade it wisely."
-                </p>
-                
-                <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 20px;">
-                    <div style="color: #00ff88; font-size: 0.9rem;">
-                        <strong>⚡ Live Signal Processing</strong>
-                    </div>
-                    <div style="color: #8b4cf7; font-size: 0.9rem;">
-                        <strong>🕳️ Dimensional Analytics</strong>
-                    </div>
-                    <div style="color: #ff6b35; font-size: 0.9rem;">
-                        <strong>🐛 Wormhole Detection</strong>
-                    </div>
-                </div>
+        <div class="times-grid">
+            <div class="time-card" data-edt-time="00:43">
+                <div class="time-name">MIDNIGHT</div>
+                <div class="time-value" data-time-display>00:43</div>
+                <div class="countdown" data-countdown></div>
+                <div class="time-description">When markets dream in darkness</div>
             </div>
             
-            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(0, 255, 136, 0.3);">
-                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; margin: 0;">
-                    © 2024 Priceworm Protocol | <span style="color: #00ff88;">Interdimensional Trading Solutions</span>
-                </p>
-                <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.7rem; margin-top: 10px;">
-                    Risk Warning: Trading through temporal wormholes may result in paradoxical losses
-                </p>
+            <div class="time-card" data-edt-time="05:43">
+                <div class="time-name">PREMARKET</div>
+                <div class="time-value" data-time-display>05:43</div>
+                <div class="countdown" data-countdown></div>
+                <div class="time-description">The first breath before dawn</div>
+            </div>
+            
+            <div class="time-card" data-edt-time="17:43">
+                <div class="time-name">AFTERHOURS</div>
+                <div class="time-value" data-time-display>17:43</div>
+                <div class="countdown" data-countdown></div>
+                <div class="time-description">Twilight revelations unfold</div>
+            </div>
+            
+            <div class="time-card" data-edt-time="12:43">
+                <div class="time-name">MIDDAY</div>
+                <div class="time-value" data-time-display>12:43</div>
+                <div class="countdown" data-countdown></div>
+                <div class="time-description">Peak clarity under noon sun</div>
             </div>
         </div>
         
-        <!-- Footer scanline effect -->
-        <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #00ff88, transparent); animation: footerScanline 3s linear infinite;"></div>
+        <div class="warning">
+            ⚠️ WARNING: The Priceworm observes you as you observe it. Prolonged exposure may result in pattern recognition psychosis, temporal displacement, or sudden clarity. ⚠️
+        </div>
+        
+        <div class="narrative">
+            <span class="hidden-message" style="top: 30px; right: 50px;">THE NUMBERS ARE ALIVE</span>
+            <p>Those who have followed the Priceworm report strange phenomena: seeing market movements before they occur, dreaming in candlestick charts, hearing the whisper of order flow in the silence between heartbeats. These are not side effects—they are <em>symptoms of understanding</em>.</p>
+            
+            <p>The worm teaches us that price is not a number but a <strong>narrative</strong>, not a fact but a <strong>consensus hallucination</strong> maintained by millions of participants who agree, for brief moments, on the value of things. And when that consensus shifts, fortunes are made and lost in the time it takes a photon to cross a trading floor.</p>
+            
+            <p>Remember: The Priceworm does not judge. It does not hope or fear. It simply <em>is</em>, a mirror held up to the collective unconscious of capital itself. What you see in that mirror says more about you than it does about the worm.</p>
+            <span class="hidden-message" style="bottom: 20px; left: 50%;">YOU CANNOT UNSEE THIS</span>
+        </div>
+    </div>
+
+    <div class="secret-input" id="secret-input">
+        <input type="text" id="command-input" placeholder="ENTER COMMAND..." />
+    </div>
+    
+    <footer>
+        <p>THE WORM TURNS • THE MARKET BREATHES • THE DATA NEVER LIES (EXCEPT WHEN IT DOES)</p>
+        <p style="margin-top: 1rem; font-size: 0.8rem;">All times converted to your local timezone (from EDT, UTC-4)</p>
+        <p style="margin-top: 0.5rem; font-size: 0.7rem; color: #404040;">Press Ctrl+Shift+W to reveal the truth</p>
+        <p style="margin-top: 1.5rem;">
+            <a href="https://t.me/priceworm" target="_blank" style="color: #00ff88; text-decoration: none; border: 2px solid #00ff88; padding: 0.5rem 1rem; border-radius: 5px; display: inline-block; transition: all 0.3s;">
+                JOIN THE TELEGRAM
+            </a>
+        </p>
     </footer>
 
-    <style>
-        @keyframes footerFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+    <script>
+        // Audio Context for sound effects
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playTone(frequency, duration, type = 'sine') {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+            
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + duration);
         }
-        
-        @keyframes footerTitleGlow {
-            from { 
-                text-shadow: 0 0 15px #ff6b35;
-                transform: scale(1);
+
+        function playGlitchSound() {
+            const frequencies = [220, 440, 660, 880];
+            const freq = frequencies[Math.floor(Math.random() * frequencies.length)];
+            playTone(freq, 0.05, 'square');
+        }
+
+        function playWarningSound() {
+            playTone(800, 0.1, 'sawtooth');
+            setTimeout(() => playTone(600, 0.1, 'sawtooth'), 100);
+        }
+
+        function playAmbientDrone() {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.frequency.value = 55;
+            oscillator.type = 'sine';
+            gainNode.gain.value = 0.02;
+            
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), 3000);
+        }
+
+        // Observation counter
+        let observationCount = 0;
+        let isBeingWatched = false;
+
+        function incrementObservations() {
+            observationCount++;
+            document.getElementById('obs-count').textContent = observationCount;
+            
+            if (observationCount > 10 && !isBeingWatched) {
+                isBeingWatched = true;
+                document.getElementById('observation-counter').classList.add('watching');
+                document.getElementById('watch-status').textContent = 'ACTIVE SURVEILLANCE';
+                playWarningSound();
+                triggerGlitch();
             }
-            to { 
-                text-shadow: 0 0 25px #ff6b35, 0 0 35px #00ff88;
-                transform: scale(1.02);
+        }
+
+        // Track mouse movement
+        let lastMouseMove = Date.now();
+        document.addEventListener('mousemove', () => {
+            lastMouseMove = Date.now();
+            if (Math.random() < 0.02) {
+                incrementObservations();
+                playGlitchSound();
+            }
+        });
+
+        // Live clock
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('live-time').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // Check if we're near a sacred time and update countdowns
+            updateSacredTimes(now);
+        }
+
+        // Convert EDT time to local time and calculate countdowns
+        function updateSacredTimes(now) {
+            const cards = document.querySelectorAll('.time-card');
+            let nearestTime = Infinity;
+            let isNearSacredTime = false;
+
+            cards.forEach(card => {
+                const edtTime = card.getAttribute('data-edt-time');
+                const [edtHours, edtMinutes] = edtTime.split(':').map(Number);
+                
+                // Convert EDT (UTC-4) to local time
+                // Create a date object for today at the EDT time
+                const edtDate = new Date();
+                edtDate.setUTCHours(edtHours + 4, edtMinutes, 0, 0); // EDT is UTC-4, so add 4 to get UTC
+                
+                // Get local time representation
+                const localHours = String(edtDate.getHours()).padStart(2, '0');
+                const localMinutes = String(edtDate.getMinutes()).padStart(2, '0');
+                
+                // Update the display
+                const timeDisplay = card.querySelector('[data-time-display]');
+                timeDisplay.textContent = `${localHours}:${localMinutes}`;
+                
+                // Calculate time until this sacred time
+                let targetTime = new Date(now);
+                targetTime.setHours(edtDate.getHours(), edtDate.getMinutes(), 0, 0);
+                
+                // If the time has passed today, set it for tomorrow
+                if (targetTime <= now) {
+                    targetTime.setDate(targetTime.getDate() + 1);
+                }
+                
+                const diff = targetTime - now;
+                const diffMinutes = Math.floor(diff / 60000);
+                const diffHours = Math.floor(diffMinutes / 60);
+                const remainingMinutes = diffMinutes % 60;
+                
+                // Update countdown
+                const countdownEl = card.querySelector('[data-countdown]');
+                if (diffHours > 0) {
+                    countdownEl.textContent = `in ${diffHours}h ${remainingMinutes}m`;
+                } else if (diffMinutes > 0) {
+                    countdownEl.textContent = `in ${diffMinutes}m`;
+                } else {
+                    countdownEl.textContent = 'IMMINENT';
+                }
+                
+                // Check if imminent (within 5 minutes)
+                if (diffMinutes < 5) {
+                    countdownEl.classList.add('imminent');
+                    card.classList.add('active');
+                    isNearSacredTime = true;
+                    
+                    // Play warning sound occasionally when very close
+                    if (diffMinutes < 1 && Math.random() < 0.1) {
+                        playWarningSound();
+                        triggerGlitch();
+                    }
+                } else {
+                    countdownEl.classList.remove('imminent');
+                    card.classList.remove('active');
+                }
+                
+                // Track nearest time
+                if (diff < nearestTime) {
+                    nearestTime = diff;
+                }
+            });
+            
+            // Update warning display
+            const warningEl = document.getElementById('time-warning');
+            if (isNearSacredTime) {
+                warningEl.classList.add('active');
+            } else {
+                warningEl.classList.remove('active');
             }
         }
-        
-        @keyframes footerBoxGlow {
-            0%, 100% { 
-                box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-                border-color: #00ff88;
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Price chart
+        const canvas = document.getElementById('price-chart');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+
+        let priceData = [];
+        let basePrice = 100;
+
+        function generatePrice() {
+            const volatility = isBeingWatched ? 2 : 1;
+            const change = (Math.random() - 0.5) * volatility;
+            basePrice += change;
+            basePrice = Math.max(50, Math.min(150, basePrice)); // Keep in range
+            return basePrice;
+        }
+
+        function drawChart() {
+            ctx.fillStyle = 'rgba(10, 14, 39, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            if (priceData.length > 100) priceData.shift();
+            priceData.push(generatePrice());
+            
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            const xStep = canvas.width / priceData.length;
+            priceData.forEach((price, i) => {
+                const x = i * xStep;
+                const y = canvas.height - ((price - 50) / 100 * canvas.height);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            
+            ctx.stroke();
+            
+            // Add glitch effect randomly
+            if (Math.random() < 0.05) {
+                ctx.strokeStyle = '#ff00ff';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                const randomY = Math.random() * canvas.height;
+                ctx.moveTo(0, randomY);
+                ctx.lineTo(canvas.width, randomY);
+                ctx.stroke();
             }
-            50% { 
-                box-shadow: 0 0 30px rgba(139, 76, 247, 0.4);
-                border-color: #8b4cf7;
+        }
+
+        setInterval(drawChart, 100);
+
+        // Time card interactions
+        document.querySelectorAll('.time-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.add('active');
+                playTone(440 + Math.random() * 220, 0.2, 'sine');
+                incrementObservations();
+                setTimeout(() => card.classList.remove('active'), 1000);
+            });
+        });
+
+        // Title interaction
+        document.getElementById('title').addEventListener('click', () => {
+            playAmbientDrone();
+            triggerGlitch();
+            incrementObservations();
+        });
+
+        // Glitch effect
+        function triggerGlitch() {
+            const glitchLayer = document.getElementById('glitch-layer');
+            glitchLayer.style.opacity = '1';
+            glitchLayer.style.background = `
+                repeating-linear-gradient(
+                    ${Math.random() * 360}deg,
+                    #ff00ff ${Math.random() * 10}px,
+                    transparent ${Math.random() * 20}px,
+                    #00ffff ${Math.random() * 30}px
+                )
+            `;
+            setTimeout(() => {
+                glitchLayer.style.opacity = '0';
+            }, 100);
+        }
+
+        // Text corruption
+        function corruptText() {
+            const elements = document.querySelectorAll('.narrative p');
+            const randomEl = elements[Math.floor(Math.random() * elements.length)];
+            if (randomEl) {
+                randomEl.classList.add('corrupted');
+                setTimeout(() => randomEl.classList.remove('corrupted'), 300);
             }
         }
-        
-        @keyframes footerScanline {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-        
-        footer a:hover h3 {
-            color: #00ff88 !important;
-            text-shadow: 0 0 25px #00ff88 !important;
-            transform: scale(1.05);
-        }
-    </style>
-</body>
-</html>
+
+        setInterval(() => {
+            if (isBeingWatched && Math.random() < 0.1) {
+                corruptText();
+                playGlitchSound();
+            }
+        }, 3000);
+
+        // Secret command input
+        let commandSequence = '';
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'W') {
+                const secretInput = document.getElementById('secret-input');
+                secretInput.classList.add('visible');
+                document.getElementById('command-input').focus();
+            }
+
+            commandSequence += e.key;
+            if (commandSequence.length > 20) {
+                commandSequence = commandSequence.slice(-20);
+            }
+
+            // Easter egg: typing "worm"
+            if (commandSequence.toLowerCase().includes('worm')) {
+                playAmbientDrone();
+                document.body.style.animation = 'pulse 1s';
+                setTimeout(() => document.body.style.animation = '', 1000);
+                commandSequence = '';
+            }
+        });
+
+        document.getElementById('command-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const command = e.target.value.toLowerCase();
+                if (command === 'observe') {
+                    isBeingWatched = true;
+                    document.getElementById('observation-counter').classList.add('watching');
+                    playWarningSound();
+                } else if (command === 'reset') {
+                    observationCount = 0;
+                    isBeingWatched = false;
+                    document.getElementById('observation-counter').classList.remove('watching');
+                    document.getElementById('obs-count').textContent = '0';
+                } else if (command === 'truth') {
+                    alert('THE PRICEWORM IS NEITHER PREDICTION NOR PROPHECY\nIT IS THE MARKET OBSERVING ITSELF\nTHROUGH YOUR EYES');
+                }
+                e.target.value = '';
+                document.getElementById('secret-input').classList.remove('visible');
+            }
+        });
+
+        // Background pulse on activity
+        setInterval(() => {
+            if (Date.now() - lastMouseMove < 1000) {
+                document.getElementById('background-image').style.opacity = '0.25';
+            } else {
+                document.getElementById('background-image').style.opacity = '0.15';
+            }
+        }, 500);
+
+        // Random ambient sounds
+        setInterval(() => {
+            if (Math.random() < 0.05) {
+                playTone(110 + Math.random() * 440, 0.3, 'triangle');
+            }
+        }, 5000);
+
+        // Console easter egg
+        console.log('%cPRICEWORM SYSTEM v4.43', 'color: #00ff88; font-size: 20px; font-family: monospace;');
+        console.log('%cYou are being observed.', 'color: #ff0000; font-size: 14px;');
+        console.log('%cType: observe(), reset(), or truth()', 'color: #ffff00; font-size: 12px;');
+
+        window.observe = () => {
+            isBeingWatched = true;
+            document.getElementById('observation-counter').classList.add('watching');
+            console.log('%cACTIVE SURVEILLANCE ENABLED', 'color: #ff0000; font-size: 16px;');
+            playWarningSound();
+        };
+
+        window.reset = () => {
+            observationCount = 0;
+            isBeingWatched = false;
+            document.getElementById('observation-counter').classList.remove('watching');
+            document.getElementById('obs-count').textContent = '0';
+            document.getElementById('watch-status').textContent = 'Passive monitoring';
+            console.log('%cSYSTEM RESET', 'color: #00ff88; font-size: 16px;');
+        };
+
+        window.truth = () => {
+            console.log('%c═══════════════════════════════════════', 'color: #ff00ff;');
+            console.log('%cTHE PRICEWORM IS NEITHER PREDICTION NOR PROPHECY', 'color: #ff00ff; font-size: 14px;');
+            console.log('%cIT IS THE MARKET OBSERVING ITSELF', 'color: #ff00ff; font-size: 14px;');
+            console.log('%cTHROUGH YOUR EYES', 'color: #ff00ff; font-size: 14px;');
+            console.log('%c═══════════════════════════════════════', 'color: #ff00ff;');
+            playAmbientDrone();
+            triggerGlitch();
+        };
+
+        // Initialize on load
+        playTone(220, 0.1, 'sine');
+    </script>
