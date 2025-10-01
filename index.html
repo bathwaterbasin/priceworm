@@ -34,6 +34,17 @@
             transition: opacity 2s;
         }
 
+        #svg-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
         #glitch-layer {
             position: fixed;
             top: 0;
@@ -417,6 +428,76 @@
     </style>
 </head>
 <body>
+    <svg id="svg-background" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+        <defs>
+            <radialGradient id="glow1" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.3" />
+                <stop offset="100%" style="stop-color:#00ff88;stop-opacity:0" />
+            </radialGradient>
+            <radialGradient id="glow2" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style="stop-color:#ff00ff;stop-opacity:0.3" />
+                <stop offset="100%" style="stop-color:#ff00ff;stop-opacity:0" />
+            </radialGradient>
+            <radialGradient id="glow3" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style="stop-color:#00ffff;stop-opacity:0.3" />
+                <stop offset="100%" style="stop-color:#00ffff;stop-opacity:0" />
+            </radialGradient>
+        </defs>
+        
+        <!-- Floating orbs -->
+        <circle cx="300" cy="200" r="120" fill="url(#glow1)" opacity="0.4">
+            <animate attributeName="cy" values="200;250;200" dur="8s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.4;0.6;0.4" dur="8s" repeatCount="indefinite"/>
+        </circle>
+        
+        <circle cx="1600" cy="300" r="150" fill="url(#glow2)" opacity="0.3">
+            <animate attributeName="cy" values="300;350;300" dur="10s" repeatCount="indefinite"/>
+            <animate attributeName="cx" values="1600;1550;1600" dur="10s" repeatCount="indefinite"/>
+        </circle>
+        
+        <circle cx="900" cy="600" r="100" fill="url(#glow3)" opacity="0.5">
+            <animate attributeName="cy" values="600;550;600" dur="7s" repeatCount="indefinite"/>
+            <animate attributeName="r" values="100;120;100" dur="7s" repeatCount="indefinite"/>
+        </circle>
+        
+        <circle cx="1400" cy="800" r="80" fill="url(#glow1)" opacity="0.4">
+            <animate attributeName="cx" values="1400;1450;1400" dur="9s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Worm-like paths -->
+        <path d="M 0,540 Q 480,400 960,540 T 1920,540" stroke="#00ff88" stroke-width="2" fill="none" opacity="0.2">
+            <animate attributeName="d" 
+                values="M 0,540 Q 480,400 960,540 T 1920,540;
+                        M 0,540 Q 480,600 960,540 T 1920,540;
+                        M 0,540 Q 480,400 960,540 T 1920,540" 
+                dur="12s" repeatCount="indefinite"/>
+        </path>
+        
+        <path d="M 0,300 Q 640,200 1280,300 T 1920,300" stroke="#ff00ff" stroke-width="2" fill="none" opacity="0.15">
+            <animate attributeName="d" 
+                values="M 0,300 Q 640,200 1280,300 T 1920,300;
+                        M 0,300 Q 640,350 1280,300 T 1920,300;
+                        M 0,300 Q 640,200 1280,300 T 1920,300" 
+                dur="15s" repeatCount="indefinite"/>
+        </path>
+        
+        <!-- Scattered small particles -->
+        <circle cx="200" cy="100" r="3" fill="#00ff88" opacity="0.6">
+            <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="800" cy="150" r="2" fill="#ff00ff" opacity="0.5">
+            <animate attributeName="opacity" values="0.5;0.8;0.5" dur="4s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="1500" cy="200" r="3" fill="#00ffff" opacity="0.4">
+            <animate attributeName="opacity" values="0.4;0.7;0.4" dur="5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="400" cy="900" r="2" fill="#00ff88" opacity="0.5">
+            <animate attributeName="opacity" values="0.5;0.3;0.5" dur="6s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="1200" cy="950" r="3" fill="#ff00ff" opacity="0.4">
+            <animate attributeName="opacity" values="0.4;0.6;0.4" dur="4.5s" repeatCount="indefinite"/>
+        </circle>
+    </svg>
     <div id="background-image"></div>
     <div id="glitch-layer"></div>
     
@@ -507,14 +588,9 @@
     </div>
     
     <footer>
-        <p>THE WORM TURNS • THE MARKET BREATHES • THE DATA NEVER LIES (EXCEPT WHEN IT DOES)</p>
+        <p><a href="https://t.me/+xVjWoIc81d1mNTEx" target="_blank" style="color: #00ff88; text-decoration: none; transition: all 0.3s;">THE WORM TURNS</a> • <a href="https://www.tradingview.com/script/U4Y5LsGx-Price-Worm-Session-Pivots/" target="_blank" style="color: #ff00ff; text-decoration: none; transition: all 0.3s;">THE MARKET BREATHES</a> • THE DATA NEVER LIES (EXCEPT WHEN IT DOES)</p>
         <p style="margin-top: 1rem; font-size: 0.8rem;">All times converted to your local timezone (from EDT, UTC-4)</p>
         <p style="margin-top: 0.5rem; font-size: 0.7rem; color: #404040;">Press Ctrl+Shift+W to reveal the truth</p>
-        <p style="margin-top: 1.5rem;">
-            <a href="https://t.me/+xVjWoIc81d1mNTEx" target="_blank" style="color: #00ff88; text-decoration: none; border: 2px solid #00ff88; padding: 0.5rem 1rem; border-radius: 5px; display: inline-block; transition: all 0.3s;">
-                JOIN THE TELEGRAM
-            </a>
-        </p>
     </footer>
 
     <script>
