@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive ASCII Creatures</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0a0a;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            color: #00ff00;
+            cursor: crosshair;
+        }
+        #canvas {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        .creature {
+            position: absolute;
+            white-space: pre;
+            font-size: 14px;
+            line-height: 14px;
+            text-shadow: 0 0 10px currentColor;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        .creature:hover {
+            transform: scale(1.2);
+            filter: brightness(1.5);
+        }
+        #info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 255, 0, 0.1);
+            padding: 10px;
+            border: 1px solid #00ff00;
+            font-size: 12px;
+            max-width: 250px;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        Click creatures to interact!<br>
+        🐱 Cats chase your cursor<br>
+        🐮 Cows graze slowly<br>
+        🐛 Bugs scatter from cursor<br>
+        🐰 Bunnies hop around<br>
+        🦉 Owls watch you<br>
+        🐟 Fish swim in schools<br>
+        🐑 Sheep follow each other<br>
+        🐻 Bears wander randomly<br>
+        🐦 Birds fly in circles<br>
+        🐸 Frogs jump periodically
+    </div>
+    <div id="canvas"></div>
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+        
+        const creatures = [
+            {
+                frames: ['  /\\_/\\\n ( o.o )\n  > ^ <', '  /\\_/\\\n ( -.- )\n  > ^ <'],
+                name: 'cat',
+                color: '#ffaa00',
+                behavior: 'chase'
+            },
+            {
+                frames: ['  ^___^\n  (o o)\\_______\n  (__)\\       )\\/\\\n      ||----w |\n      ||     ||', '  ^___^\n  (O O)\\_______\n  (__)\\       )\\/\\\n      ||----w |\n      ||     ||'],
+                name: 'cow',
+                color: '#ffffff',
+                behavior: 'graze'
+            },
+            {
+                frames: ['    /\\___/\\\n   /       \\\n  l  u   u  l\n--l----*----l--\n   \\_  W  _/\n     |||||', '    /\\___/\\\n   /       \\\n  l  -   -  l\n--l----*----l--\n   \\_  W  _/\n     |||||'],
+                name: 'bug',
+                color: '#00ff00',
+                behavior: 'scatter'
+            },
+            {
+                frames: ['  ()_()\n  (o.o)\n   > <', '  ()_()\n  (O.O)\n   > <'],
+                name: 'bunny',
+                color: '#ffccff',
+                behavior: 'hop'
+            },
+            {
+                frames: ['    /\\\n   {@@}\n   (--)\n    II', '    /\\\n   {oo}\n   (--)\n    II'],
+                name: 'owl',
+                color: '#8b4513',
+                behavior: 'watch'
+            },
+            {
+                frames: [' /|\n/_| o\n  |/\n  /', ' /|\n/_|o\n  |/\n  /'],
+                name: 'fish',
+                color: '#00ccff',
+                behavior: 'school'
+            },
+            {
+                frames: ['   ,__,\n   (oo)____\n   (__)    )\\\n      ll--ll', '   ,__,\n   (oo)____\n   (__)    )\\\n      ll--ll'],
+                name: 'sheep',
+                color: '#eeeeee',
+                behavior: 'follow'
+            },
+            {
+                frames: ['  (\\_/)\n =(^.^)=\n  (")_(")', '  (\\_/)\n =(-.-)=\n  (")_(")'],
+                name: 'bear',
+                color: '#8b4513',
+                behavior: 'wander'
+            },
+            {
+                frames: ['    ^__^\n~( oo )\n  (  )~~\n   VV', '    ^__^\n~( -- )\n  (  )~~\n   VV'],
+                name: 'bird',
+                color: '#ffff00',
+                behavior: 'circle'
+            },
+            {
+                frames: [' /\\_/\\ \n( o o )\n=( I )=\n |_|_|', ' /\\_/\\ \n( - - )\n=( I )=\n |_|_|'],
+                name: 'frog',
+                color: '#00ff88',
+                behavior: 'jump'
+            }
+        ];
+        
+        class AnimatedCreature {
+            constructor(creature, index) {
+                this.creature = creature;
+                this.x = Math.random() * (window.innerWidth - 200);
+                this.y = Math.random() * (window.innerHeight - 150);
+                this.vx = 0;
+                this.vy = 0;
+                this.frameIndex = 0;
+                this.frameCounter = 0;
+                this.behaviorTimer = 0;
+                this.targetX = this.x;
+                this.targetY = this.y;
+                this.index = index;
+                
+                this.element = document.createElement('div');
+                this.element.className = 'creature';
+                this.element.style.left = this.x + 'px';
+                this.element.style.top = this.y + 'px';
+                this.element.style.color = creature.color;
+                this.element.textContent = creature.frames[0];
+                
+                this.element.addEventListener('click', () => this.onClick());
+                
+                canvas.appendChild(this.element);
+            }
+            
+            onClick() {
+                this.vx = (Math.random() - 0.5) * 10;
+                this.vy = (Math.random() - 0.5) * 10;
+                this.element.style.transform = 'scale(1.5) rotate(360deg)';
+                setTimeout(() => {
+                    this.element.style.transform = '';
+                }, 300);
+            }
+            
+            update(allCreatures) {
+                this.behaviorTimer++;
+                
+                switch(this.creature.behavior) {
+                    case 'chase':
+                        const dx = mouseX - this.x;
+                        const dy = mouseY - this.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist > 50) {
+                            this.vx += dx / dist * 0.3;
+                            this.vy += dy / dist * 0.3;
+                        }
+                        break;
+                        
+                    case 'scatter':
+                        const sdx = mouseX - this.x;
+                        const sdy = mouseY - this.y;
+                        const sdist = Math.sqrt(sdx * sdx + sdy * sdy);
+                        if (sdist < 200) {
+                            this.vx -= sdx / sdist * 0.5;
+                            this.vy -= sdy / sdist * 0.5;
+                        }
+                        break;
+                        
+                    case 'hop':
+                        if (this.behaviorTimer > 60) {
+                            this.vx = (Math.random() - 0.5) * 8;
+                            this.vy = -Math.random() * 5;
+                            this.behaviorTimer = 0;
+                        }
+                        this.vy += 0.2;
+                        break;
+                        
+                    case 'watch':
+                        const angle = Math.atan2(mouseY - this.y, mouseX - this.x);
+                        this.vx = Math.cos(angle) * 0.1;
+                        this.vy = Math.sin(angle) * 0.1;
+                        break;
+                        
+                    case 'school':
+                        const fish = allCreatures.filter(c => c.creature.behavior === 'school');
+                        let avgX = 0, avgY = 0;
+                        fish.forEach(f => {
+                            avgX += f.x;
+                            avgY += f.y;
+                        });
+                        avgX /= fish.length;
+                        avgY /= fish.length;
+                        this.vx += (avgX - this.x) * 0.001;
+                        this.vy += (avgY - this.y) * 0.001;
+                        this.vx += (Math.random() - 0.5) * 0.1;
+                        this.vy += (Math.random() - 0.5) * 0.1;
+                        break;
+                        
+                    case 'follow':
+                        const sheep = allCreatures.filter(c => c.creature.behavior === 'follow');
+                        if (sheep.length > 1) {
+                            const leader = sheep[0];
+                            if (this !== leader) {
+                                const fdx = leader.x - this.x;
+                                const fdy = leader.y - this.y;
+                                this.vx += fdx * 0.002;
+                                this.vy += fdy * 0.002;
+                            } else {
+                                this.vx += (Math.random() - 0.5) * 0.2;
+                                this.vy += (Math.random() - 0.5) * 0.2;
+                            }
+                        }
+                        break;
+                        
+                    case 'graze':
+                        if (this.behaviorTimer > 120) {
+                            this.targetX = Math.random() * window.innerWidth;
+                            this.targetY = Math.random() * window.innerHeight;
+                            this.behaviorTimer = 0;
+                        }
+                        this.vx += (this.targetX - this.x) * 0.001;
+                        this.vy += (this.targetY - this.y) * 0.001;
+                        break;
+                        
+                    case 'wander':
+                        if (this.behaviorTimer > 100) {
+                            this.vx = (Math.random() - 0.5) * 2;
+                            this.vy = (Math.random() - 0.5) * 2;
+                            this.behaviorTimer = 0;
+                        }
+                        break;
+                        
+                    case 'circle':
+                        const centerX = window.innerWidth / 2;
+                        const centerY = window.innerHeight / 2;
+                        const radius = 200;
+                        const circleAngle = this.behaviorTimer * 0.02;
+                        this.targetX = centerX + Math.cos(circleAngle + this.index) * radius;
+                        this.targetY = centerY + Math.sin(circleAngle + this.index) * radius;
+                        this.vx += (this.targetX - this.x) * 0.01;
+                        this.vy += (this.targetY - this.y) * 0.01;
+                        break;
+                        
+                    case 'jump':
+                        if (this.behaviorTimer > 80) {
+                            this.vx = (Math.random() - 0.5) * 6;
+                            this.vy = (Math.random() - 0.5) * 6;
+                            this.behaviorTimer = 0;
+                        }
+                        break;
+                }
+                
+                this.vx *= 0.95;
+                this.vy *= 0.95;
+                
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < 0 || this.x > window.innerWidth - 100) {
+                    this.vx *= -1;
+                    this.x = Math.max(0, Math.min(window.innerWidth - 100, this.x));
+                }
+                if (this.y < 0 || this.y > window.innerHeight - 100) {
+                    this.vy *= -1;
+                    this.y = Math.max(0, Math.min(window.innerHeight - 100, this.y));
+                }
+                
+                this.element.style.left = this.x + 'px';
+                this.element.style.top = this.y + 'px';
+                
+                this.frameCounter++;
+                if (this.frameCounter > 20) {
+                    this.frameIndex = (this.frameIndex + 1) % this.creature.frames.length;
+                    this.element.textContent = this.creature.frames[this.frameIndex];
+                    this.frameCounter = 0;
+                }
+            }
+        }
+        
+        const activeCreatures = [];
+        
+        creatures.forEach((creature, i) => {
+            for (let j = 0; j < 2; j++) {
+                activeCreatures.push(new AnimatedCreature(creature, activeCreatures.length));
+            }
+        });
+        
+        function animate() {
+            activeCreatures.forEach(c => c.update(activeCreatures));
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+    </script>
+</body>
+</html>
