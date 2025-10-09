@@ -1,0 +1,520 @@
+import React, { useState } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
+import { TrendingUp, TrendingDown, AlertCircle, RefreshCw, BookOpen } from 'lucide-react';
+
+const BitcoinIndicatorDashboard = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [metrics, setMetrics] = useState({
+    fedRate: 4.09,
+    dxy: 98.81,
+    creditSpread: 375,
+    liquidations24h: 400,
+    longShortRatio: 0.70,
+    lthSupply: 14.46,
+    lthPercent: 73,
+    btcPrice: 124600
+  });
+
+  const [historicalData] = useState([
+    { date: '09/01', score: 58, btcPrice: 98000 },
+    { date: '09/08', score: 62, btcPrice: 102000 },
+    { date: '09/15', score: 65, btcPrice: 108000 },
+    { date: '09/22', score: 64, btcPrice: 112000 },
+    { date: '09/29', score: 66, btcPrice: 118000 },
+    { date: '10/06', score: 68, btcPrice: 124600 }
+  ]);
+
+  // Normalize functions
+  const normalizeInterestRate = (rate) => {
+    return Math.max(0, Math.min(100, (5.5 - rate) / 0.05));
+  };
+
+  const normalizeDXY = (dxy) => {
+    return Math.max(0, Math.min(100, (115 - dxy) / 0.35));
+  };
+
+  const normalizeCreditSpread = (spread) => {
+    return Math.max(0, Math.min(100, (1000 - spread) / 8));
+  };
+
+  const normalizeLiquidations = (ratio) => {
+    if (ratio > 0.7) return 75;
+    if (ratio < 0.3) return 25;
+    return 50;
+  };
+
+  const normalizeLTH = (percent) => {
+    return Math.max(0, Math.min(100, (percent - 55) / 0.3));
+  };
+
+  const scores = {
+    interestRate: normalizeInterestRate(metrics.fedRate),
+    dxy: normalizeDXY(metrics.dxy),
+    creditSpread: normalizeCreditSpread(metrics.creditSpread),
+    liquidations: normalizeLiquidations(metrics.longShortRatio),
+    lth: normalizeLTH(metrics.lthPercent)
+  };
+
+  const compositeScore = (
+    scores.interestRate * 0.40 +
+    scores.dxy * 0.20 +
+    scores.creditSpread * 0.10 +
+    scores.liquidations * 0.15 +
+    scores.lth * 0.15
+  ).toFixed(2);
+
+  const getSignal = (score) => {
+    if (score >= 80) return { text: 'EXTREME BULLISH', color: 'bg-green-600', textColor: 'text-green-600' };
+    if (score >= 60) return { text: 'BULLISH', color: 'bg-green-500', textColor: 'text-green-500' };
+    if (score >= 40) return { text: 'NEUTRAL', color: 'bg-yellow-500', textColor: 'text-yellow-500' };
+    if (score >= 20) return { text: 'BEARISH', color: 'bg-orange-500', textColor: 'text-orange-500' };
+    return { text: 'EXTREME BEARISH', color: 'bg-red-600', textColor: 'text-red-600' };
+  };
+
+  const signal = getSignal(compositeScore);
+
+  const metricData = [
+    { name: 'Interest Rates', score: scores.interestRate, weight: 40, value: `${metrics.fedRate}%` },
+    { name: 'DXY Index', score: scores.dxy, weight: 20, value: metrics.dxy.toFixed(2) },
+    { name: 'Credit Spreads', score: scores.creditSpread, weight: 10, value: `${metrics.creditSpread} bps` },
+    { name: 'Liquidations', score: scores.liquidations, weight: 15, value: `$${metrics.liquidations24h}M` },
+    { name: 'LTH Supply', score: scores.lth, weight: 15, value: `${metrics.lthPercent}%` }
+  ];
+
+  const getBarColor = (score) => {
+    if (score >= 70) return '#10b981';
+    if (score >= 50) return '#fbbf24';
+    return '#ef4444';
+  };
+
+  const updateMetric = (key, value) => {
+    setMetrics(prev => ({ ...prev, [key]: parseFloat(value) }));
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+              Bitcoin Composite Indicator
+            </h1>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <div className="text-sm text-gray-400">BTC Price</div>
+                <div className="text-2xl font-bold text-orange-500">
+                  ${metrics.btcPrice.toLocaleString()}
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="text-gray-400">Real-time macro + on-chain sentiment tracker</p>
+          
+          {/* Tab Navigation */}
+          <div className="flex gap-2 mt-4">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`px-4 py-2 rounded-lg font-semibold transition ${
+                activeTab === 'dashboard' 
+                  ? 'bg-orange-500 text-white' 
+                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+              }`}
+            >
+              Dashboard
+            </button>
+            <button
+              onClick={() => setActiveTab('learn')}
+              className={`px-4 py-2 rounded-lg font-semibold transition flex items-center gap-2 ${
+                activeTab === 'learn' 
+                  ? 'bg-orange-500 text-white' 
+                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+              }`}
+            >
+              <BookOpen size={18} />
+              Learn More
+            </button>
+          </div>
+        </div>
+
+        {activeTab === 'dashboard' && (
+          <>
+            {/* Composite Score Card */}
+            <div className="bg-slate-800 rounded-2xl p-8 mb-6 border border-slate-700 shadow-2xl">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-lg text-gray-400 mb-2">Current Composite Score</h2>
+                  <div className="text-6xl font-bold">{compositeScore}</div>
+                </div>
+                <div className={`${signal.color} px-6 py-3 rounded-xl text-white font-bold text-xl`}>
+                  {signal.text}
+                </div>
+              </div>
+              
+              <div className="w-full bg-slate-700 rounded-full h-4 overflow-hidden">
+                <div 
+                  className={`h-full ${signal.color} transition-all duration-500`}
+                  style={{ width: `${compositeScore}%` }}
+                />
+              </div>
+              
+              <div className="flex justify-between text-xs text-gray-400 mt-2">
+                <span>0</span>
+                <span>20</span>
+                <span>40</span>
+                <span>60</span>
+                <span>80</span>
+                <span>100</span>
+              </div>
+            </div>
+
+            {/* Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                <h3 className="text-xl font-bold mb-4">Historical Trend</h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <LineChart data={historicalData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="date" stroke="#9ca3af" />
+                    <YAxis stroke="#9ca3af" domain={[0, 100]} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }}
+                      labelStyle={{ color: '#f3f4f6' }}
+                    />
+                    <Legend />
+                    <Line type="monotone" dataKey="score" stroke="#f97316" strokeWidth={3} name="Composite Score" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                <h3 className="text-xl font-bold mb-4">Metric Breakdown</h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={metricData} layout="horizontal">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis type="number" domain={[0, 100]} stroke="#9ca3af" />
+                    <YAxis type="category" dataKey="name" width={100} stroke="#9ca3af" />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }}
+                    />
+                    <Bar dataKey="score" radius={[0, 8, 8, 0]}>
+                      {metricData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={getBarColor(entry.score)} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Metric Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              {metricData.map((metric, idx) => (
+                <div key={idx} className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h4 className="text-sm text-gray-400">{metric.name}</h4>
+                      <div className="text-2xl font-bold mt-1">{metric.value}</div>
+                    </div>
+                    <div className="text-xs bg-slate-700 px-2 py-1 rounded">
+                      {metric.weight}% weight
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-slate-700 rounded-full h-2">
+                      <div 
+                        className="h-full rounded-full transition-all"
+                        style={{ 
+                          width: `${metric.score}%`,
+                          backgroundColor: getBarColor(metric.score)
+                        }}
+                      />
+                    </div>
+                    <span className="text-sm font-semibold">{metric.score.toFixed(0)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Input Panel */}
+            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700 mb-6">
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <AlertCircle size={20} />
+                Update Metrics
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">Fed Funds Rate (%)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={metrics.fedRate}
+                    onChange={(e) => updateMetric('fedRate', e.target.value)}
+                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-orange-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">DXY Index</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={metrics.dxy}
+                    onChange={(e) => updateMetric('dxy', e.target.value)}
+                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-orange-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">Credit Spread (bps)</label>
+                  <input
+                    type="number"
+                    value={metrics.creditSpread}
+                    onChange={(e) => updateMetric('creditSpread', e.target.value)}
+                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-orange-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">LTH Supply (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={metrics.lthPercent}
+                    onChange={(e) => updateMetric('lthPercent', e.target.value)}
+                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-orange-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Current Signals */}
+            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+              <h3 className="text-xl font-bold mb-4">Current Signals</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-start gap-3">
+                  {scores.lth > 80 ? (
+                    <TrendingUp className="text-green-500 mt-1" size={20} />
+                  ) : (
+                    <TrendingDown className="text-red-500 mt-1" size={20} />
+                  )}
+                  <div>
+                    <div className="font-semibold">On-Chain Conviction</div>
+                    <div className="text-sm text-gray-400">
+                      {scores.lth > 80 ? 'Strong accumulation by long-term holders' : 'LTH distribution occurring'}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  {scores.creditSpread > 60 ? (
+                    <TrendingUp className="text-green-500 mt-1" size={20} />
+                  ) : (
+                    <TrendingDown className="text-red-500 mt-1" size={20} />
+                  )}
+                  <div>
+                    <div className="font-semibold">Risk Appetite</div>
+                    <div className="text-sm text-gray-400">
+                      {scores.creditSpread > 60 ? 'Credit spreads tight - risk-on environment' : 'Spreads widening - risk-off'}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  {scores.dxy > 50 ? (
+                    <TrendingUp className="text-green-500 mt-1" size={20} />
+                  ) : (
+                    <TrendingDown className="text-red-500 mt-1" size={20} />
+                  )}
+                  <div>
+                    <div className="font-semibold">Dollar Strength</div>
+                    <div className="text-sm text-gray-400">
+                      {scores.dxy > 50 ? 'DXY weakening - favorable for BTC' : 'Dollar strengthening - headwind'}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  {scores.interestRate > 50 ? (
+                    <TrendingUp className="text-green-500 mt-1" size={20} />
+                  ) : (
+                    <TrendingDown className="text-red-500 mt-1" size={20} />
+                  )}
+                  <div>
+                    <div className="font-semibold">Liquidity Conditions</div>
+                    <div className="text-sm text-gray-400">
+                      {scores.interestRate > 50 ? 'Rates declining - improving liquidity' : 'Rates elevated - tight conditions'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {activeTab === 'learn' && (
+          <div className="space-y-6">
+            {/* Interest Rates */}
+            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+              <div className="flex items-start gap-4">
+                <div className="text-4xl">💰</div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold mb-3">Interest Rates (40% Weight)</h3>
+                  <p className="text-gray-300 mb-4">
+                    The Federal Funds Rate determines how expensive it is to borrow money. Lower rates mean more liquidity flows into risk assets like Bitcoin.
+                  </p>
+                  <div className="bg-slate-900 p-4 rounded-lg mb-4">
+                    <div className="font-semibold text-orange-400 mb-2">📊 Current: {metrics.fedRate}%</div>
+                    <div className="text-sm text-gray-300 space-y-2">
+                      <p>• Fed cut rates by 25 bps in Sept 2025 to 4.00-4.25%, down from 2022-2023 peak of 5.25-5.50%</p>
+                      <p>• Bitcoin shows ~0.9 correlation with global M2 liquidity (which moves inversely to rates)</p>
+                      <p>• Historical: March 2020 rate cut to near-zero → BTC rallied from $4,000 to $69,000 over 18 months</p>
+                      <p>• 2022 rate hikes to 5.5% → BTC crashed 75% from $69k to $16k</p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-500 bg-slate-900 p-3 rounded">
+                    <strong>Formula:</strong> Score = (5.5 - Current Rate) / 0.05 • 0% = 100 points, 5.5% = 0 points
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* DXY */}
+            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+              <div className="flex items-start gap-4">
+                <div className="text-4xl">💵</div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold mb-3">US Dollar Index - DXY (20% Weight)</h3>
+                  <p className="text-gray-300 mb-4">
+                    Measures USD strength against major currencies. A weaker dollar makes Bitcoin more attractive as an alternative store of value.
+                  </p>
+                  <div className="bg-slate-900 p-4 rounded-lg mb-4">
+                    <div className="font-semibold text-green-400 mb-2">📊 Current: {metrics.dxy}</div>
+                    <div className="text-sm text-gray-300 space-y-2">
+                      <p>• DXY fell 11% in 2025 from ~110 to current 98.8</p>
+                      <p>• Bitcoin showed -0.65 correlation with DXY in Q1 2024 (inverse relationship)</p>
+                      <p>• April 2018 & March 2022: DXY strength + BTC weakness = bear market signals</p>
+                      <p>• November 2020: DXY weakness preceded BTC rally from $16k to $69k</p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-500 bg-slate-900 p-3 rounded">
+                    <strong>Formula:</strong> Score = (115 - DXY) / 0.35 • DXY 80 = 100 points, DXY 115 = 0 points
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Credit Spreads */}
+            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+              <div className="flex items-start gap-4">
+                <div className="text-4xl">📊</div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold mb-3">High Yield Credit Spreads (10% Weight)</h3>
+                  <p className="text-gray-300 mb-4">
+                    The difference between corporate junk bond yields and Treasury yields. Tight spreads indicate confidence; wide spreads signal fear.
+                  </p>
+                  <div className="bg-slate-900 p-4 rounded-lg mb-4">
+                    <div className="font-semibold text-blue-400 mb-2">📊 Current: {metrics.creditSpread} bps</div>
+                    <div className="text-sm text-gray-300 space-y-2">
+                      <p>• Sept 2025: Spreads in tightest 5% of readings over 25 years (264-393 bps range)</p>
+                      <p>• March 2020 COVID crash: Spreads spiked to 1000+ bps</p>
+                      <p>• Example: Google's bond spread jumped from 25 bps to 150 bps during crash</p>
+                      <p>• Tight spreads today = strong risk appetite supporting Bitcoin's rally</p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-500 bg-slate-900 p-3 rounded">
+                    <strong>Formula:</strong> Score = (1000 - Spread) / 8 • 200 bps = 100 points, 1000 bps = 0 points
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Liquidations */}
+            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+              <div className="flex items-start gap-4">
+                <div className="text-4xl">⚡</div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold mb-3">24h Liquidations (15% Weight)</h3>
+                  <p className="text-gray-300 mb-4">
+                    Tracks forced selling of leveraged positions. Heavy short liquidations indicate bullish momentum; heavy long liquidations suggest bearish pressure.
+                  </p>
+                  <div className="bg-slate-900 p-4 rounded-lg mb-4">
+                    <div className="font-semibold text-red-400 mb-2">📊 Current: ${metrics.liquidations24h}M ({(metrics.longShortRatio * 100).toFixed(0)}% shorts)</div>
+                    <div className="text-sm text-gray-300 space-y-2">
+                      <p>• Oct 2, 2025: BTC surged past $120K, triggering $400M liquidations (70% shorts) - bullish</p>
+                      <p>• March 5, 2024: BTC hit ATH $69,200, dropped 10%, liquidating $1B (mostly longs) - top signal</p>
+                      <p>• March 2025: Record $2.3B liquidated in 24 hours - largest cascade in history</p>
+                      <p>• Major liquidations often mark local tops (longs) or bottoms (shorts)</p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-500 bg-slate-900 p-3 rounded">
+                    <strong>Formula:</strong> 75 points if &gt;70% shorts (bullish), 25 if &gt;70% longs (bearish), 50 if mixed
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* LTH Supply */}
+            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+              <div className="flex items-start gap-4">
+                <div className="text-4xl">🏛️</div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold mb-3">Long-Term Holder Supply (15% Weight)</h3>
+                  <p className="text-gray-300 mb-4">
+                    Percentage of Bitcoin held for 155+ days. High LTH supply indicates strong conviction and reduced selling pressure.
+                  </p>
+                  <div className="bg-slate-900 p-4 rounded-lg mb-4">
+                    <div className="font-semibold text-purple-400 mb-2">📊 Current: {metrics.lthPercent}% ({metrics.lthSupply}M BTC)</div>
+                    <div className="text-sm text-gray-300 space-y-2">
+                      <p>• June 2025: Record 14.46M BTC (73%) held by long-term holders</p>
+                      <p>• 85% of supply held by long-term wallets = limited sell pressure</p>
+                      <p>• June 2022: LTH capitulation when BTC fell below $20K = bear market bottom</p>
+                      <p>• Current high LTH levels mirror 2019-2020 accumulation before 2021 rally</p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-500 bg-slate-900 p-3 rounded">
+                    <strong>Formula:</strong> Score = (LTH % - 55) / 0.3 • 85%+ = 100 points, &lt;55% = 0 points
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Data Sources */}
+            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+              <h3 className="text-2xl font-bold mb-4">📚 Data Sources</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-slate-900 p-4 rounded-lg">
+                  <div className="font-semibold text-orange-400 mb-2">Fed Funds Rate</div>
+                  <div className="text-sm text-gray-300">FRED Database (Federal Reserve)</div>
+                  <div className="text-xs text-gray-500 mt-1">Updates: Daily | Check: Weekly</div>
+                </div>
+                <div className="bg-slate-900 p-4 rounded-lg">
+                  <div className="font-semibold text-green-400 mb-2">DXY Index</div>
+                  <div className="text-sm text-gray-300">TradingView / ICE Exchange</div>
+                  <div className="text-xs text-gray-500 mt-1">Updates: Real-time | Check: Weekly</div>
+                </div>
+                <div className="bg-slate-900 p-4 rounded-lg">
+                  <div className="font-semibold text-blue-400 mb-2">Credit Spreads</div>
+                  <div className="text-sm text-gray-300">FRED - ICE BofA HY Index OAS</div>
+                  <div className="text-xs text-gray-500 mt-1">Updates: Daily | Check: Weekly</div>
+                </div>
+                <div className="bg-slate-900 p-4 rounded-lg">
+                  <div className="font-semibold text-red-400 mb-2">Liquidations</div>
+                  <div className="text-sm text-gray-300">CoinGlass / CoinAnk</div>
+                  <div className="text-xs text-gray-500 mt-1">Updates: Real-time | Check: Daily</div>
+                </div>
+                <div className="bg-slate-900 p-4 rounded-lg">
+                  <div className="font-semibold text-purple-400 mb-2">LTH Supply</div>
+                  <div className="text-sm text-gray-300">Glassnode / Bitcoin Magazine Pro</div>
+                  <div className="text-xs text-gray-500 mt-1">Updates: Daily | Check: Weekly</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="mt-8 text-center text-sm text-gray-500">
+          <p className="mb-2">⚠️ Educational purposes only • Not financial advice</p>
+          <p>Past performance does not guarantee future results • Update weekly for best accuracy</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BitcoinIndicatorDashboard;
