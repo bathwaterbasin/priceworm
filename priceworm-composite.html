@@ -4,443 +4,418 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bitcoin Sentiment Indicator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
         .glass {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
+        .score-terrible { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .score-poor { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
+        .score-neutral { background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); }
+        .score-good { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+        .score-excellent { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
         .tab-active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: rgba(255, 255, 255, 0.3);
+            border-bottom: 3px solid white;
+        }
+        input[type="number"], select {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
         }
-        .sentiment-excellent { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .sentiment-good { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
-        .sentiment-neutral { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-        .sentiment-poor { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
-        .sentiment-terrible { background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%); }
+        input[type="number"]::placeholder, select option {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        select {
+            color: white;
+        }
+        select option {
+            background: #667eea;
+            color: white;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        .chart-container-large {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
     <div class="max-w-7xl mx-auto">
-        <div class="glass rounded-2xl shadow-2xl overflow-hidden">
-            <!-- Header -->
-            <div class="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-white">
-                <h1 class="text-3xl md:text-4xl font-bold mb-2">₿ Bitcoin Sentiment Indicator</h1>
-                <p class="text-purple-100">Advanced Multi-Factor Analysis Dashboard</p>
-            </div>
-
+        <div class="glass rounded-3xl shadow-2xl p-6 md:p-8 mb-6">
+            <h1 class="text-4xl md:text-5xl font-bold text-white text-center mb-2">Bitcoin Sentiment Indicator</h1>
+            <p class="text-center text-white text-opacity-80 mb-6">Multi-factor analysis for Bitcoin market sentiment</p>
+            
             <!-- Tabs -->
-            <div class="flex border-b border-gray-200">
-                <button id="dashboardTab" class="tab-active flex-1 py-4 px-6 font-semibold transition-all" onclick="switchTab('dashboard')">
-                    Dashboard
-                </button>
-                <button id="learnTab" class="flex-1 py-4 px-6 font-semibold transition-all hover:bg-gray-100" onclick="switchTab('learn')">
-                    Learn More
-                </button>
+            <div class="flex border-b border-white border-opacity-20 mb-6">
+                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-active px-6 py-3 text-white font-semibold transition-all">Dashboard</button>
+                <button onclick="switchTab('learn')" id="tab-learn" class="px-6 py-3 text-white font-semibold transition-all hover:bg-white hover:bg-opacity-10">Learn More</button>
             </div>
 
             <!-- Dashboard Tab -->
-            <div id="dashboardContent" class="p-6">
+            <div id="content-dashboard">
                 <!-- Composite Score Display -->
-                <div id="scoreDisplay" class="sentiment-neutral text-white rounded-xl p-8 mb-6 text-center shadow-lg">
-                    <div class="text-lg font-semibold mb-2">Composite Sentiment Score</div>
-                    <div class="text-6xl font-bold mb-2"><span id="compositeScore">50.0</span></div>
-                    <div class="text-2xl font-semibold"><span id="sentimentLabel">NEUTRAL</span></div>
+                <div class="glass rounded-2xl p-8 mb-6 text-center">
+                    <h2 class="text-white text-xl mb-4">Composite Sentiment Score</h2>
+                    <div id="scoreDisplay" class="score-neutral rounded-xl p-6 inline-block min-w-[200px]">
+                        <div class="text-6xl font-bold text-white" id="scoreValue">50</div>
+                        <div class="text-xl text-white mt-2" id="scoreLabel">Neutral</div>
+                    </div>
                 </div>
 
-                <!-- Metrics Input Grid -->
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                    <!-- Federal Funds Rate -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Federal Funds Rate (%)
-                            <span class="text-xs font-normal text-gray-500 ml-1">(40% weight)</span>
-                        </label>
-                        <input type="number" id="fedRate" step="0.25" value="4.50" 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                               oninput="updateScore()">
-                        <p class="text-xs text-gray-500 mt-1">Lower = Better (0-5.5%)</p>
+                <!-- Input Fields -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                    <div class="glass rounded-xl p-4">
+                        <label class="block text-white font-semibold mb-2">Federal Funds Rate (%)</label>
+                        <input type="number" id="fedRate" step="0.01" value="4.50" onchange="updateScore()" class="w-full px-4 py-2 rounded-lg text-white">
+                        <div class="text-xs text-white text-opacity-70 mt-1">Weight: 30% | Lower is better</div>
                     </div>
-
-                    <!-- DXY Index -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            DXY Index
-                            <span class="text-xs font-normal text-gray-500 ml-1">(15% weight)</span>
-                        </label>
-                        <input type="number" id="dxy" step="0.1" value="102.0" 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                               oninput="updateScore()">
-                        <p class="text-xs text-gray-500 mt-1">Lower = Better (89-115)</p>
+                    <div class="glass rounded-xl p-4">
+                        <label class="block text-white font-semibold mb-2">QQQ Nasdaq-100</label>
+                        <input type="number" id="qqq" step="0.01" value="610" onchange="updateScore()" class="w-full px-4 py-2 rounded-lg text-white">
+                        <div class="text-xs text-white text-opacity-70 mt-1">Weight: 20% | Higher is better</div>
                     </div>
-
-                    <!-- High Yield Spreads -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            HY Credit Spreads (bps)
-                            <span class="text-xs font-normal text-gray-500 ml-1">(10% weight)</span>
-                        </label>
-                        <input type="number" id="hySpread" step="10" value="350" 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                               oninput="updateScore()">
-                        <p class="text-xs text-gray-500 mt-1">Lower = Better (300-1100bps)</p>
+                    <div class="glass rounded-xl p-4">
+                        <label class="block text-white font-semibold mb-2">LTH Supply (%)</label>
+                        <input type="number" id="lth" step="0.01" value="59.5" onchange="updateScore()" class="w-full px-4 py-2 rounded-lg text-white">
+                        <div class="text-xs text-white text-opacity-70 mt-1">Weight: 20% | Bell curve (59-63% optimal)</div>
                     </div>
-
-                    <!-- 24h Liquidations -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            24h Liquidations
-                            <span class="text-xs font-normal text-gray-500 ml-1">(10% weight)</span>
-                        </label>
-                        <select id="liquidations" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                onchange="updateScore()">
-                            <option value="50">Mixed (50%+ both)</option>
-                            <option value="75">>70% Shorts Liquidated</option>
-                            <option value="25">>70% Longs Liquidated</option>
+                    <div class="glass rounded-xl p-4">
+                        <label class="block text-white font-semibold mb-2">DXY Dollar Index</label>
+                        <input type="number" id="dxy" step="0.01" value="100.3" onchange="updateScore()" class="w-full px-4 py-2 rounded-lg text-white">
+                        <div class="text-xs text-white text-opacity-70 mt-1">Weight: 15% | Lower is better</div>
+                    </div>
+                    <div class="glass rounded-xl p-4">
+                        <label class="block text-white font-semibold mb-2">HY Credit Spreads (bps)</label>
+                        <input type="number" id="hySpread" step="1" value="305" onchange="updateScore()" class="w-full px-4 py-2 rounded-lg text-white">
+                        <div class="text-xs text-white text-opacity-70 mt-1">Weight: 10% | Lower is better</div>
+                    </div>
+                    <div class="glass rounded-xl p-4">
+                        <label class="block text-white font-semibold mb-2">24h Liquidations</label>
+                        <select id="liq" onchange="updateScore()" class="w-full px-4 py-2 rounded-lg">
+                            <option value="75">Shorts >70% (Bullish)</option>
+                            <option value="50" selected>Mixed</option>
+                            <option value="25">Longs >70% (Bearish)</option>
                         </select>
-                        <p class="text-xs text-gray-500 mt-1">Shorts liquidated = Bullish</p>
-                    </div>
-
-                    <!-- LTH Supply -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Long-Term Holder Supply (%)
-                            <span class="text-xs font-normal text-gray-500 ml-1">(25% weight)</span>
-                        </label>
-                        <input type="number" id="lthSupply" step="0.1" value="64.0" 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                               oninput="updateScore()">
-                        <p class="text-xs text-gray-500 mt-1">Lower = Better! (56-67%)</p>
-                    </div>
-
-                    <!-- Add to History Button -->
-                    <div class="bg-gray-50 p-4 rounded-lg flex items-end">
-                        <button onclick="addToHistory()" 
-                                class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all shadow-md">
-                            Add to History
-                        </button>
+                        <div class="text-xs text-white text-opacity-70 mt-1">Weight: 5%</div>
                     </div>
                 </div>
 
-                <!-- Charts -->
-                <div class="grid lg:grid-cols-2 gap-6 mb-6">
-                    <!-- Historical Trend -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Historical Trend</h3>
-                        <div style="position: relative; height: 300px;">
-                            <canvas id="trendChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Metric Breakdown -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Metric Breakdown</h3>
-                        <div style="position: relative; height: 300px;">
-                            <canvas id="breakdownChart"></canvas>
-                        </div>
+                <!-- Date Range Filter -->
+                <div class="glass rounded-xl p-4 mb-6">
+                    <label class="block text-white font-semibold mb-2">Historical Data Filter</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="filterData('all')" class="filter-btn bg-white bg-opacity-20 px-4 py-2 rounded-lg text-white hover:bg-opacity-30 transition-all">All</button>
+                        <button onclick="filterData('2020')" class="filter-btn bg-white bg-opacity-20 px-4 py-2 rounded-lg text-white hover:bg-opacity-30 transition-all">2020</button>
+                        <button onclick="filterData('2021')" class="filter-btn bg-white bg-opacity-20 px-4 py-2 rounded-lg text-white hover:bg-opacity-30 transition-all">2021</button>
+                        <button onclick="filterData('2022')" class="filter-btn bg-white bg-opacity-20 px-4 py-2 rounded-lg text-white hover:bg-opacity-30 transition-all">2022</button>
+                        <button onclick="filterData('2023')" class="filter-btn bg-white bg-opacity-20 px-4 py-2 rounded-lg text-white hover:bg-opacity-30 transition-all">2023</button>
+                        <button onclick="filterData('2024')" class="filter-btn bg-white bg-opacity-20 px-4 py-2 rounded-lg text-white hover:bg-opacity-30 transition-all">2024</button>
+                        <button onclick="filterData('2025')" class="filter-btn bg-white bg-opacity-20 px-4 py-2 rounded-lg text-white hover:bg-opacity-30 transition-all">2025</button>
                     </div>
                 </div>
 
-                <!-- Daily Chart Section -->
-                <div class="bg-gray-50 p-6 rounded-lg">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-gray-800">Bitcoin Price vs Sentiment Score (Historical)</h3>
-                        <div class="flex gap-2">
-                            <button onclick="loadHistoricalData()" class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-all text-sm">
-                                Load Historical Data
-                            </button>
-                            <select id="dateRange" onchange="filterDateRange()" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                                <option value="all">All Data</option>
-                                <option value="2020">2020 (COVID Crash)</option>
-                                <option value="2021">2021 (Bull Peak)</option>
-                                <option value="2022">2022 (Bear Market)</option>
-                                <option value="2024">2024-2025 (Current)</option>
-                            </select>
-                        </div>
+                <!-- Metric Breakdown Chart -->
+                <div class="glass rounded-xl p-6 mb-6">
+                    <h3 class="text-white text-xl font-semibold mb-4">Current Metric Breakdown</h3>
+                    <div class="chart-container">
+                        <canvas id="metricChart"></canvas>
                     </div>
-                    <div class="mb-3 text-sm text-gray-600">
-                        <span class="font-semibold">Data Points:</span> <span id="dataPointCount">0</span> | 
-                        <span class="font-semibold">Correlation:</span> <span id="correlationValue">N/A</span>
+                </div>
+
+                <!-- Historical Trend Chart -->
+                <div class="glass rounded-xl p-6 mb-6">
+                    <h3 class="text-white text-xl font-semibold mb-4">Historical Sentiment Trend</h3>
+                    <div class="chart-container-large">
+                        <canvas id="trendChart"></canvas>
                     </div>
-                    <div style="position: relative; height: 400px;">
-                        <canvas id="dailyChart"></canvas>
+                </div>
+
+                <!-- BTC Price vs Sentiment Chart -->
+                <div class="glass rounded-xl p-6 mb-6">
+                    <h3 class="text-white text-xl font-semibold mb-4">Bitcoin Price vs Sentiment Score</h3>
+                    <div id="correlationDisplay" class="text-white mb-2">Correlation: <span id="correlationValue" class="font-bold">0.00</span></div>
+                    <div class="chart-container-large">
+                        <canvas id="btcChart"></canvas>
                     </div>
                 </div>
             </div>
 
             <!-- Learn More Tab -->
-            <div id="learnContent" class="p-6 hidden">
-                <div class="prose max-w-none">
-                    <h2 class="text-2xl font-bold mb-6 text-gray-800">Understanding the Metrics</h2>
+            <div id="content-learn" style="display: none;">
+                <div class="glass rounded-xl p-6 mb-4">
+                    <h3 class="text-white text-2xl font-bold mb-4">Understanding the Bitcoin Sentiment Indicator</h3>
+                    <p class="text-white text-opacity-90 mb-4">This indicator combines six key macroeconomic and on-chain metrics to assess the overall market sentiment for Bitcoin. Each metric is weighted based on its historical impact on Bitcoin price movements.</p>
+                </div>
 
-                    <!-- Federal Funds Rate -->
-                    <div class="bg-gray-50 p-6 rounded-lg mb-6">
-                        <h3 class="text-xl font-bold text-purple-600 mb-3">Federal Funds Rate (40% Weight)</h3>
-                        <p class="text-gray-700 mb-3">
-                            The Fed Funds Rate is the most influential factor for risk assets. Lower rates make Bitcoin more attractive as traditional savings yield less, while higher rates strengthen the dollar and reduce liquidity.
-                        </p>
-                        <p class="text-gray-700 mb-3"><strong>Formula:</strong> 100 - (rate × 18.18). Lower rates = Higher scores.</p>
-                        <div class="bg-white p-4 rounded mt-3">
-                            <p class="font-semibold text-gray-800 mb-2">Historical Examples:</p>
-                            <ul class="list-disc list-inside space-y-2 text-gray-700">
-                                <li><strong>March 2020:</strong> Emergency cut to 0-0.25% triggered massive Bitcoin rally from $4,000 to $64,000 by April 2021</li>
-                                <li><strong>November 2021:</strong> Still at 0-0.25%, peak liquidity environment coincided with BTC all-time high of $69,000</li>
-                                <li><strong>June 2022:</strong> Aggressive hikes to 1.5-1.75% contributed to BTC bottoming at $17,600</li>
-                                <li><strong>October 2024:</strong> First cut in cycle to 4.75-5.00% sparked rally from $60,000 to $73,000+</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="glass rounded-xl p-6 mb-4">
+                    <h4 class="text-white text-xl font-bold mb-3">1. Federal Funds Rate (30% Weight)</h4>
+                    <p class="text-white text-opacity-90 mb-2"><strong>Formula:</strong> Score = 100 - (Rate × 18.18)</p>
+                    <p class="text-white text-opacity-90 mb-3">The Federal Funds Rate is the most influential factor. Lower rates make Bitcoin more attractive as an alternative asset.</p>
+                    <ul class="text-white text-opacity-80 space-y-1 ml-4">
+                        <li>• <strong>March 2020:</strong> Rate at 1.25% (Score: 77) - Emergency COVID cuts boosted risk assets</li>
+                        <li>• <strong>November 2021:</strong> Rate at 0.25% (Score: 95) - Ultra-low rates during ATH ($69k BTC)</li>
+                        <li>• <strong>June 2022:</strong> Rate at 1.75% (Score: 68) - Rising rates during bear market ($17.6k BTC)</li>
+                        <li>• <strong>October 2025:</strong> Rate at 4.50% (Score: 18) - High rates despite strong BTC price ($108.6k)</li>
+                    </ul>
+                </div>
 
-                    <!-- DXY Index -->
-                    <div class="bg-gray-50 p-6 rounded-lg mb-6">
-                        <h3 class="text-xl font-bold text-purple-600 mb-3">DXY Dollar Index (15% Weight)</h3>
-                        <p class="text-gray-700 mb-3">
-                            The DXY measures the US dollar against a basket of currencies. Bitcoin typically has an inverse relationship with dollar strength, as a weaker dollar makes alternative assets more attractive.
-                        </p>
-                        <p class="text-gray-700 mb-3"><strong>Formula:</strong> 100 - ((DXY - 89) × 3.846). Lower DXY = Higher scores.</p>
-                        <div class="bg-white p-4 rounded mt-3">
-                            <p class="font-semibold text-gray-800 mb-2">Historical Examples:</p>
-                            <ul class="list-disc list-inside space-y-2 text-gray-700">
-                                <li><strong>March 2020:</strong> DXY spiked to 103 during panic, then fell to 89 by January 2021 as BTC surged</li>
-                                <li><strong>November 2021:</strong> DXY at 96, relatively weak dollar supported risk-on environment for crypto</li>
-                                <li><strong>June 2022:</strong> DXY peaked at 105, strong dollar pressured all risk assets including Bitcoin</li>
-                                <li><strong>October 2024:</strong> DXY dropped to 100-102 range, weakening dollar helped fuel the rally</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="glass rounded-xl p-6 mb-4">
+                    <h4 class="text-white text-xl font-bold mb-3">2. QQQ Nasdaq-100 (20% Weight)</h4>
+                    <p class="text-white text-opacity-90 mb-2"><strong>Formula:</strong> Score = (QQQ - 180) / 4.4</p>
+                    <p class="text-white text-opacity-90 mb-3">Tech stocks and Bitcoin often move together as risk-on assets. Higher QQQ values indicate stronger risk appetite.</p>
+                    <ul class="text-white text-opacity-80 space-y-1 ml-4">
+                        <li>• <strong>March 2020:</strong> QQQ at 180 (Score: 0) - Market crash low</li>
+                        <li>• <strong>November 2021:</strong> QQQ at 398 (Score: 50) - Strong but not peak tech valuations</li>
+                        <li>• <strong>June 2022:</strong> QQQ at 275 (Score: 22) - Bear market for tech stocks</li>
+                        <li>• <strong>October 2025:</strong> QQQ at 610 (Score: 98) - Record tech valuations support BTC</li>
+                    </ul>
+                </div>
 
-                    <!-- High Yield Spreads -->
-                    <div class="bg-gray-50 p-6 rounded-lg mb-6">
-                        <h3 class="text-xl font-bold text-purple-600 mb-3">High Yield Credit Spreads (10% Weight)</h3>
-                        <p class="text-gray-700 mb-3">
-                            Credit spreads measure the risk premium investors demand for corporate bonds over Treasuries. Tight spreads indicate market confidence and risk appetite, while wide spreads signal fear and reduced liquidity.
-                        </p>
-                        <p class="text-gray-700 mb-3"><strong>Formula:</strong> 100 - ((spread - 300) × 0.125). Lower spreads = Higher scores.</p>
-                        <div class="bg-white p-4 rounded mt-3">
-                            <p class="font-semibold text-gray-800 mb-2">Historical Examples:</p>
-                            <ul class="list-disc list-inside space-y-2 text-gray-700">
-                                <li><strong>March 2020:</strong> Spreads exploded to 1,100 bps during COVID crash, extreme risk-off mode</li>
-                                <li><strong>November 2021:</strong> Spreads compressed to 310 bps, peak market confidence and liquidity</li>
-                                <li><strong>June 2022:</strong> Spreads widened to 550 bps amid recession fears and liquidity crisis</li>
-                                <li><strong>October 2024:</strong> Spreads at 350-400 bps, healthy risk appetite supporting crypto markets</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="glass rounded-xl p-6 mb-4">
+                    <h4 class="text-white text-xl font-bold mb-3">3. Long-Term Holder Supply % (20% Weight)</h4>
+                    <p class="text-white text-opacity-90 mb-2"><strong>Formula:</strong> Bell curve with optimal range 59-63%</p>
+                    <p class="text-white text-opacity-90 mb-3">This on-chain metric shows conviction. Too low means capitulation, too high means no new buyers. The sweet spot is 59-63%.</p>
+                    <ul class="text-white text-opacity-80 space-y-1 ml-4">
+                        <li>• <strong>March 2020:</strong> 62% (Score: 100) - Optimal accumulation zone during crash</li>
+                        <li>• <strong>November 2021:</strong> 56% (Score: 25) - Profit-taking at ATH, weak hands selling</li>
+                        <li>• <strong>June 2022:</strong> 65% (Score: 75) - Strong hands holding through bear market</li>
+                        <li>• <strong>October 2025:</strong> 59.5% (Score: 100) - Perfect balance of conviction and liquidity</li>
+                    </ul>
+                </div>
 
-                    <!-- 24h Liquidations -->
-                    <div class="bg-gray-50 p-6 rounded-lg mb-6">
-                        <h3 class="text-xl font-bold text-purple-600 mb-3">24h Liquidations (15% Weight)</h3>
-                        <p class="text-gray-700 mb-3">
-                            Liquidation patterns reveal market positioning and potential for continued moves. Heavy short liquidations (longs winning) suggest bullish momentum, while heavy long liquidations signal bearish pressure.
-                        </p>
-                        <p class="text-gray-700 mb-3"><strong>Scoring:</strong> 75 if >70% shorts liquidated (bullish), 25 if >70% longs liquidated (bearish), 50 if mixed</p>
-                        <div class="bg-white p-4 rounded mt-3">
-                            <p class="font-semibold text-gray-800 mb-2">Historical Examples:</p>
-                            <ul class="list-disc list-inside space-y-2 text-gray-700">
-                                <li><strong>March 2020:</strong> $1 billion in long liquidations on March 12-13, capitulation bottom signal</li>
-                                <li><strong>November 2021:</strong> Heavy short squeezes throughout Q4 2021, 80%+ short liquidations fueling rally</li>
-                                <li><strong>June 2022:</strong> Cascading long liquidations, $400M+ in 24h, marking bear market bottom</li>
-                                <li><strong>October 2024:</strong> 70%+ short liquidations as market broke out, shorts caught offside</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="glass rounded-xl p-6 mb-4">
+                    <h4 class="text-white text-xl font-bold mb-3">4. DXY Dollar Index (15% Weight)</h4>
+                    <p class="text-white text-opacity-90 mb-2"><strong>Formula:</strong> Score = 100 - ((DXY - 89) × 3.846)</p>
+                    <p class="text-white text-opacity-90 mb-3">A weaker dollar makes Bitcoin more attractive as an alternative store of value and benefits international buyers.</p>
+                    <ul class="text-white text-opacity-80 space-y-1 ml-4">
+                        <li>• <strong>March 2020:</strong> DXY at 99.5 (Score: 60) - Flight to safety strengthened dollar</li>
+                        <li>• <strong>November 2021:</strong> DXY at 95.1 (Score: 77) - Weaker dollar fueled BTC rally</li>
+                        <li>• <strong>June 2022:</strong> DXY at 105.2 (Score: 38) - Strong dollar pressured all assets</li>
+                        <li>• <strong>October 2025:</strong> DXY at 100.3 (Score: 57) - Moderate dollar strength</li>
+                    </ul>
+                </div>
 
-                    <!-- LTH Supply -->
-                    <div class="bg-gray-50 p-6 rounded-lg mb-6">
-                        <h3 class="text-xl font-bold text-purple-600 mb-3">Long-Term Holder Supply % (25% Weight)</h3>
-                        <p class="text-gray-700 mb-3">
-                            The percentage of Bitcoin held by long-term holders (155+ days) indicates market phase. LOWER LTH supply means distribution is complete and weak hands are out - bullish for rallies. HIGHER LTH means accumulation/distribution phase - often precedes consolidation or tops.
-                        </p>
-                        <p class="text-gray-700 mb-3"><strong>Formula:</strong> (67 - LTH%) × 9.09. LOWER LTH = Higher scores (contrarian indicator).</p>
-                        <div class="bg-white p-4 rounded mt-3">
-                            <p class="font-semibold text-gray-800 mb-2">Historical Examples:</p>
-                            <ul class="list-disc list-inside space-y-2 text-gray-700">
-                                <li><strong>March 2020:</strong> LTH at 62%, high accumulation during crash = low score (bearish short-term)</li>
-                                <li><strong>November 2021:</strong> LTH dropped to 56%, distribution complete = high score (rally ready at top)</li>
-                                <li><strong>June 2022:</strong> LTH rose to 65%, accumulation phase = low score (bottom forming)</li>
-                                <li><strong>October 2024:</strong> LTH at 64-65%, still accumulating = moderate score</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="glass rounded-xl p-6 mb-4">
+                    <h4 class="text-white text-xl font-bold mb-3">5. High Yield Credit Spreads (10% Weight)</h4>
+                    <p class="text-white text-opacity-90 mb-2"><strong>Formula:</strong> Score = 100 - ((Spread - 300) × 0.125)</p>
+                    <p class="text-white text-opacity-90 mb-3">Credit spreads measure financial stress. Wider spreads indicate fear and risk-off sentiment.</p>
+                    <ul class="text-white text-opacity-80 space-y-1 ml-4">
+                        <li>• <strong>March 2020:</strong> 900 bps (Score: 25) - Extreme financial stress during COVID</li>
+                        <li>• <strong>November 2021:</strong> 305 bps (Score: 99) - Calm markets, low fear</li>
+                        <li>• <strong>June 2022:</strong> 580 bps (Score: 65) - Rising credit concerns</li>
+                        <li>• <strong>October 2025:</strong> 305 bps (Score: 99) - Stable credit markets support risk assets</li>
+                    </ul>
+                </div>
 
-                    <!-- Composite Score Interpretation -->
-                    <div class="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 rounded-lg text-white">
-                        <h3 class="text-xl font-bold mb-3">Composite Score Interpretation</h3>
-                        <div class="space-y-2">
-                            <p><strong>80-100 (Excellent):</strong> Highly favorable macro conditions, strong bullish setup</p>
-                            <p><strong>60-79 (Good):</strong> Positive environment, favorable for accumulation and holding</p>
-                            <p><strong>40-59 (Neutral):</strong> Mixed signals, cautious approach recommended</p>
-                            <p><strong>20-39 (Poor):</strong> Challenging conditions, risk-off environment</p>
-                            <p><strong>0-19 (Terrible):</strong> Severely negative macro, high risk of further downside</p>
-                        </div>
-                    </div>
+                <div class="glass rounded-xl p-6 mb-4">
+                    <h4 class="text-white text-xl font-bold mb-3">6. 24-Hour Liquidations (5% Weight)</h4>
+                    <p class="text-white text-opacity-90 mb-2"><strong>Values:</strong> 75 (>70% shorts liquidated), 50 (mixed), 25 (>70% longs liquidated)</p>
+                    <p class="text-white text-opacity-90 mb-3">Short liquidations indicate bullish momentum as bears are forced out. Long liquidations suggest bearish pressure.</p>
+                    <ul class="text-white text-opacity-80 space-y-1 ml-4">
+                        <li>• <strong>March 2020:</strong> Mixed (Score: 25) - Long liquidations during crash</li>
+                        <li>• <strong>November 2021:</strong> Shorts liquidated (Score: 75) - Short squeeze to ATH</li>
+                        <li>• <strong>June 2022:</strong> Mixed (Score: 25) - Long liquidations in bear market</li>
+                        <li>• <strong>October 2025:</strong> Mixed (Score: 50) - Balanced liquidations</li>
+                    </ul>
+                </div>
+
+                <div class="glass rounded-xl p-6">
+                    <h4 class="text-white text-xl font-bold mb-3">Interpreting the Composite Score</h4>
+                    <ul class="text-white text-opacity-90 space-y-2">
+                        <li><strong>80-100 (Excellent):</strong> Optimal macro conditions for Bitcoin appreciation</li>
+                        <li><strong>60-79 (Good):</strong> Favorable environment with some headwinds</li>
+                        <li><strong>40-59 (Neutral):</strong> Mixed signals, direction uncertain</li>
+                        <li><strong>20-39 (Poor):</strong> Challenging macro environment</li>
+                        <li><strong>0-19 (Terrible):</strong> Severe headwinds, extreme caution warranted</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        var historyData = [{ timestamp: new Date().toISOString(), score: 50.0 }];
-        var dailyData = [];
-        var allHistoricalData = [];
-        var trendChart, breakdownChart, dailyChart;
-
-        var historicalDataset = [
-            { date: '2020-03-01', btcPrice: 8500, fedRate: 1.58, dxy: 97.4, hySpread: 380, liq: 50, lth: 61 },
-            { date: '2020-03-12', btcPrice: 4800, fedRate: 1.25, dxy: 99.5, hySpread: 900, liq: 25, lth: 62 },
-            { date: '2020-03-20', btcPrice: 6200, fedRate: 0.25, dxy: 102.8, hySpread: 1100, liq: 50, lth: 62.5 },
-            { date: '2020-04-01', btcPrice: 6400, fedRate: 0.25, dxy: 100.2, hySpread: 850, liq: 50, lth: 63 },
-            { date: '2020-05-01', btcPrice: 8800, fedRate: 0.25, dxy: 99.5, hySpread: 720, liq: 75, lth: 63 },
-            { date: '2020-06-01', btcPrice: 9500, fedRate: 0.25, dxy: 97.8, hySpread: 610, liq: 75, lth: 62.5 },
-            { date: '2020-07-01', btcPrice: 9100, fedRate: 0.25, dxy: 97.2, hySpread: 550, liq: 50, lth: 62 },
-            { date: '2020-08-01', btcPrice: 11400, fedRate: 0.25, dxy: 93.5, hySpread: 490, liq: 75, lth: 61.5 },
-            { date: '2020-09-01', btcPrice: 10800, fedRate: 0.25, dxy: 92.8, hySpread: 520, liq: 50, lth: 61 },
-            { date: '2020-10-01', btcPrice: 10600, fedRate: 0.25, dxy: 93.9, hySpread: 480, liq: 50, lth: 60.5 },
-            { date: '2020-11-01', btcPrice: 13700, fedRate: 0.25, dxy: 92.2, hySpread: 410, liq: 75, lth: 60 },
-            { date: '2020-12-01', btcPrice: 18800, fedRate: 0.25, dxy: 90.8, hySpread: 360, liq: 75, lth: 59 },
-            { date: '2021-01-01', btcPrice: 29000, fedRate: 0.25, dxy: 89.9, hySpread: 340, liq: 75, lth: 58 },
-            { date: '2021-02-01', btcPrice: 33500, fedRate: 0.25, dxy: 90.7, hySpread: 320, liq: 75, lth: 57.5 },
-            { date: '2021-03-01', btcPrice: 58800, fedRate: 0.25, dxy: 92.8, hySpread: 310, liq: 75, lth: 57 },
-            { date: '2021-04-01', btcPrice: 59000, fedRate: 0.25, dxy: 91.2, hySpread: 305, liq: 75, lth: 56.5 },
-            { date: '2021-05-01', btcPrice: 37300, fedRate: 0.25, dxy: 90.8, hySpread: 330, liq: 25, lth: 57 },
-            { date: '2021-06-01', btcPrice: 35000, fedRate: 0.25, dxy: 91.9, hySpread: 320, liq: 50, lth: 58 },
-            { date: '2021-07-01', btcPrice: 33600, fedRate: 0.25, dxy: 92.4, hySpread: 310, liq: 50, lth: 59 },
-            { date: '2021-08-01', btcPrice: 41500, fedRate: 0.25, dxy: 92.7, hySpread: 300, liq: 75, lth: 59.5 },
-            { date: '2021-09-01', btcPrice: 43800, fedRate: 0.25, dxy: 93.9, hySpread: 310, liq: 50, lth: 58 },
-            { date: '2021-10-01', btcPrice: 61800, fedRate: 0.25, dxy: 94.2, hySpread: 305, liq: 75, lth: 57 },
-            { date: '2021-11-01', btcPrice: 61000, fedRate: 0.25, dxy: 96.0, hySpread: 310, liq: 75, lth: 56 },
-            { date: '2021-11-10', btcPrice: 69000, fedRate: 0.25, dxy: 95.1, hySpread: 305, liq: 75, lth: 56 },
-            { date: '2021-12-01', btcPrice: 48900, fedRate: 0.25, dxy: 96.3, hySpread: 330, liq: 25, lth: 56.5 },
-            { date: '2022-01-01', btcPrice: 46200, fedRate: 0.25, dxy: 95.6, hySpread: 350, liq: 50, lth: 57 },
-            { date: '2022-02-01', btcPrice: 38500, fedRate: 0.25, dxy: 96.0, hySpread: 380, liq: 25, lth: 58 },
-            { date: '2022-03-01', btcPrice: 44400, fedRate: 0.50, dxy: 98.3, hySpread: 420, liq: 50, lth: 59 },
-            { date: '2022-04-01', btcPrice: 37600, fedRate: 0.50, dxy: 103.0, hySpread: 450, liq: 25, lth: 60 },
-            { date: '2022-05-01', btcPrice: 31500, fedRate: 1.00, dxy: 101.7, hySpread: 480, liq: 25, lth: 62 },
-            { date: '2022-06-01', btcPrice: 20000, fedRate: 1.75, dxy: 104.5, hySpread: 550, liq: 25, lth: 64 },
-            { date: '2022-06-18', btcPrice: 17600, fedRate: 1.75, dxy: 105.2, hySpread: 580, liq: 25, lth: 65 },
-            { date: '2022-07-01', btcPrice: 19200, fedRate: 2.50, dxy: 105.8, hySpread: 540, liq: 50, lth: 65.5 },
-            { date: '2022-08-01', btcPrice: 23300, fedRate: 2.50, dxy: 106.4, hySpread: 510, liq: 75, lth: 66 },
-            { date: '2022-09-01', btcPrice: 20100, fedRate: 3.25, dxy: 109.8, hySpread: 560, liq: 25, lth: 66 },
-            { date: '2022-10-01', btcPrice: 19400, fedRate: 3.25, dxy: 112.1, hySpread: 530, liq: 50, lth: 66.5 },
-            { date: '2022-11-01', btcPrice: 20500, fedRate: 4.00, dxy: 110.8, hySpread: 510, liq: 50, lth: 67 },
-            { date: '2022-12-01', btcPrice: 17100, fedRate: 4.50, dxy: 103.5, hySpread: 490, liq: 50, lth: 67 },
-            { date: '2023-01-01', btcPrice: 16600, fedRate: 4.50, dxy: 103.2, hySpread: 470, liq: 50, lth: 67 },
-            { date: '2023-02-01', btcPrice: 23100, fedRate: 4.75, dxy: 103.8, hySpread: 450, liq: 75, lth: 66.5 },
-            { date: '2023-03-01', btcPrice: 23600, fedRate: 5.00, dxy: 102.9, hySpread: 480, liq: 50, lth: 66 },
-            { date: '2023-04-01', btcPrice: 28400, fedRate: 5.00, dxy: 101.8, hySpread: 440, liq: 75, lth: 65.5 },
-            { date: '2023-05-01', btcPrice: 27200, fedRate: 5.25, dxy: 101.2, hySpread: 420, liq: 50, lth: 65 },
-            { date: '2023-06-01', btcPrice: 30400, fedRate: 5.25, dxy: 102.5, hySpread: 400, liq: 75, lth: 64.5 },
-            { date: '2023-07-01', btcPrice: 29200, fedRate: 5.50, dxy: 101.0, hySpread: 390, liq: 50, lth: 64 },
-            { date: '2023-08-01', btcPrice: 29100, fedRate: 5.50, dxy: 102.8, hySpread: 410, liq: 50, lth: 64 },
-            { date: '2023-09-01', btcPrice: 26900, fedRate: 5.50, dxy: 105.7, hySpread: 440, liq: 25, lth: 64.5 },
-            { date: '2023-10-01', btcPrice: 34500, fedRate: 5.50, dxy: 106.2, hySpread: 420, liq: 75, lth: 64 },
-            { date: '2023-11-01', btcPrice: 37800, fedRate: 5.50, dxy: 104.0, hySpread: 390, liq: 75, lth: 63.5 },
-            { date: '2023-12-01', btcPrice: 44200, fedRate: 5.50, dxy: 101.4, hySpread: 360, liq: 75, lth: 63 },
-            { date: '2024-01-01', btcPrice: 42200, fedRate: 5.50, dxy: 102.3, hySpread: 350, liq: 50, lth: 63 },
-            { date: '2024-02-01', btcPrice: 51800, fedRate: 5.50, dxy: 104.2, hySpread: 340, liq: 75, lth: 62.5 },
-            { date: '2024-03-01', btcPrice: 69300, fedRate: 5.50, dxy: 103.9, hySpread: 330, liq: 75, lth: 62 },
-            { date: '2024-04-01', btcPrice: 63500, fedRate: 5.50, dxy: 105.8, hySpread: 350, liq: 50, lth: 62.5 },
-            { date: '2024-05-01', btcPrice: 64200, fedRate: 5.50, dxy: 105.2, hySpread: 340, liq: 50, lth: 63 },
-            { date: '2024-06-01', btcPrice: 61000, fedRate: 5.50, dxy: 105.5, hySpread: 330, liq: 50, lth: 63.5 },
-            { date: '2024-07-01', btcPrice: 66500, fedRate: 5.50, dxy: 104.3, hySpread: 320, liq: 75, lth: 64 },
-            { date: '2024-08-01', btcPrice: 61500, fedRate: 5.50, dxy: 103.1, hySpread: 330, liq: 50, lth: 64 },
-            { date: '2024-09-01', btcPrice: 63800, fedRate: 5.00, dxy: 100.8, hySpread: 310, liq: 75, lth: 64.5 },
-            { date: '2024-10-01', btcPrice: 69000, fedRate: 4.75, dxy: 103.5, hySpread: 300, liq: 75, lth: 65 },
-            { date: '2024-11-01', btcPrice: 73500, fedRate: 4.75, dxy: 104.8, hySpread: 310, liq: 75, lth: 64.5 },
-            { date: '2024-12-01', btcPrice: 71200, fedRate: 4.50, dxy: 106.2, hySpread: 320, liq: 50, lth: 64 },
-            { date: '2025-01-01', btcPrice: 74800, fedRate: 4.50, dxy: 108.5, hySpread: 330, liq: 50, lth: 64 }
+        // Historical data (73 points from March 2020 to October 2025)
+        var historicalData = [
+            {date: '2020-03', btc: 4800, fed: 1.25, dxy: 99.5, spread: 900, liq: 25, lth: 62, qqq: 180},
+            {date: '2020-04', btc: 7000, fed: 0.25, dxy: 99.8, spread: 800, liq: 50, lth: 63, qqq: 200},
+            {date: '2020-05', btc: 9500, fed: 0.25, dxy: 99.2, spread: 700, liq: 50, lth: 63, qqq: 230},
+            {date: '2020-06', btc: 9200, fed: 0.25, dxy: 97.4, spread: 650, liq: 50, lth: 64, qqq: 245},
+            {date: '2020-07', btc: 11000, fed: 0.25, dxy: 93.5, spread: 600, liq: 50, lth: 64, qqq: 265},
+            {date: '2020-08', btc: 11700, fed: 0.25, dxy: 92.8, spread: 550, liq: 50, lth: 64, qqq: 285},
+            {date: '2020-09', btc: 10800, fed: 0.25, dxy: 94.2, spread: 530, liq: 25, lth: 65, qqq: 270},
+            {date: '2020-10', btc: 13500, fed: 0.25, dxy: 93.1, spread: 500, liq: 75, lth: 65, qqq: 290},
+            {date: '2020-11', btc: 18500, fed: 0.25, dxy: 91.8, spread: 450, liq: 75, lth: 64, qqq: 305},
+            {date: '2020-12', btc: 28900, fed: 0.25, dxy: 89.9, spread: 400, liq: 75, lth: 62, qqq: 315},
+            {date: '2021-01', btc: 33000, fed: 0.25, dxy: 90.2, spread: 380, liq: 75, lth: 60, qqq: 330},
+            {date: '2021-02', btc: 45000, fed: 0.25, dxy: 90.8, spread: 360, liq: 75, lth: 58, qqq: 335},
+            {date: '2021-03', btc: 58800, fed: 0.25, dxy: 92.8, spread: 350, liq: 75, lth: 57, qqq: 325},
+            {date: '2021-04', btc: 57700, fed: 0.25, dxy: 91.0, spread: 340, liq: 50, lth: 56, qqq: 340},
+            {date: '2021-05', btc: 37300, fed: 0.25, dxy: 89.9, spread: 330, liq: 25, lth: 58, qqq: 335},
+            {date: '2021-06', btc: 35000, fed: 0.25, dxy: 91.9, spread: 340, liq: 25, lth: 60, qqq: 355},
+            {date: '2021-07', btc: 41500, fed: 0.25, dxy: 92.7, spread: 330, liq: 50, lth: 61, qqq: 370},
+            {date: '2021-08', btc: 47100, fed: 0.25, dxy: 92.7, spread: 320, liq: 75, lth: 62, qqq: 380},
+            {date: '2021-09', btc: 43800, fed: 0.25, dxy: 94.2, spread: 325, liq: 25, lth: 63, qqq: 360},
+            {date: '2021-10', btc: 61300, fed: 0.25, dxy: 93.9, spread: 310, liq: 75, lth: 60, qqq: 385},
+            {date: '2021-11', btc: 69000, fed: 0.25, dxy: 95.1, spread: 305, liq: 75, lth: 56, qqq: 398},
+            {date: '2021-12', btc: 47200, fed: 0.25, dxy: 96.0, spread: 320, liq: 25, lth: 58, qqq: 395},
+            {date: '2022-01', btc: 38000, fed: 0.25, dxy: 96.4, spread: 350, liq: 25, lth: 60, qqq: 355},
+            {date: '2022-02', btc: 43200, fed: 0.25, dxy: 96.7, spread: 360, liq: 50, lth: 61, qqq: 345},
+            {date: '2022-03', btc: 45500, fed: 0.50, dxy: 98.3, spread: 380, liq: 50, lth: 62, qqq: 365},
+            {date: '2022-04', btc: 37600, fed: 0.75, dxy: 103.0, spread: 420, liq: 25, lth: 63, qqq: 310},
+            {date: '2022-05', btc: 31800, fed: 1.00, dxy: 101.8, spread: 480, liq: 25, lth: 64, qqq: 295},
+            {date: '2022-06', btc: 17600, fed: 1.75, dxy: 105.2, spread: 580, liq: 25, lth: 65, qqq: 275},
+            {date: '2022-07', btc: 23300, fed: 2.50, dxy: 106.4, spread: 560, liq: 50, lth: 66, qqq: 300},
+            {date: '2022-08', btc: 20000, fed: 2.50, dxy: 108.5, spread: 550, liq: 25, lth: 66, qqq: 315},
+            {date: '2022-09', btc: 19400, fed: 3.25, dxy: 112.2, spread: 600, liq: 25, lth: 66, qqq: 275},
+            {date: '2022-10', btc: 20500, fed: 3.25, dxy: 111.8, spread: 580, liq: 50, lth: 66, qqq: 280},
+            {date: '2022-11', btc: 17200, fed: 4.00, dxy: 106.9, spread: 550, liq: 25, lth: 66, qqq: 295},
+            {date: '2022-12', btc: 16500, fed: 4.50, dxy: 103.5, spread: 520, liq: 25, lth: 65, qqq: 270},
+            {date: '2023-01', btc: 23100, fed: 4.75, dxy: 101.7, spread: 480, liq: 75, lth: 65, qqq: 310},
+            {date: '2023-02', btc: 23400, fed: 4.75, dxy: 104.0, spread: 470, liq: 50, lth: 65, qqq: 305},
+            {date: '2023-03', btc: 28500, fed: 5.00, dxy: 102.9, spread: 450, liq: 75, lth: 64, qqq: 320},
+            {date: '2023-04', btc: 29200, fed: 5.25, dxy: 101.8, spread: 440, liq: 50, lth: 64, qqq: 335},
+            {date: '2023-05', btc: 27200, fed: 5.25, dxy: 104.2, spread: 460, liq: 25, lth: 64, qqq: 330},
+            {date: '2023-06', btc: 30400, fed: 5.25, dxy: 103.0, spread: 445, liq: 50, lth: 64, qqq: 365},
+            {date: '2023-07', btc: 29800, fed: 5.50, dxy: 101.2, spread: 430, liq: 50, lth: 63, qqq: 380},
+            {date: '2023-08', btc: 26100, fed: 5.50, dxy: 103.7, spread: 450, liq: 25, lth: 63, qqq: 370},
+            {date: '2023-09', btc: 26900, fed: 5.50, dxy: 106.0, spread: 470, liq: 25, lth: 63, qqq: 360},
+            {date: '2023-10', btc: 34500, fed: 5.50, dxy: 106.7, spread: 460, liq: 75, lth: 62, qqq: 365},
+            {date: '2023-11', btc: 37700, fed: 5.50, dxy: 104.1, spread: 430, liq: 75, lth: 62, qqq: 395},
+            {date: '2023-12', btc: 42300, fed: 5.50, dxy: 101.4, spread: 400, liq: 75, lth: 61, qqq: 415},
+            {date: '2024-01', btc: 43100, fed: 5.50, dxy: 103.2, spread: 390, liq: 50, lth: 60, qqq: 430},
+            {date: '2024-02', btc: 51900, fed: 5.50, dxy: 104.3, spread: 380, liq: 75, lth: 59, qqq: 445},
+            {date: '2024-03', btc: 70700, fed: 5.50, dxy: 104.0, spread: 360, liq: 75, lth: 58, qqq: 465},
+            {date: '2024-04', btc: 63500, fed: 5.50, dxy: 105.8, spread: 375, liq: 25, lth: 59, qqq: 445},
+            {date: '2024-05', btc: 68800, fed: 5.50, dxy: 104.7, spread: 365, liq: 50, lth: 59, qqq: 475},
+            {date: '2024-06', btc: 61200, fed: 5.50, dxy: 105.9, spread: 380, liq: 25, lth: 60, qqq: 485},
+            {date: '2024-07', btc: 66500, fed: 5.50, dxy: 104.4, spread: 370, liq: 50, lth: 60, qqq: 500},
+            {date: '2024-08', btc: 59700, fed: 5.50, dxy: 103.0, spread: 385, liq: 25, lth: 60, qqq: 490},
+            {date: '2024-09', btc: 63800, fed: 5.00, dxy: 100.8, spread: 360, liq: 50, lth: 60, qqq: 510},
+            {date: '2024-10', btc: 69300, fed: 5.00, dxy: 103.9, spread: 350, liq: 75, lth: 60, qqq: 515},
+            {date: '2024-11', btc: 97400, fed: 4.75, dxy: 106.5, spread: 330, liq: 75, lth: 59, qqq: 540},
+            {date: '2024-12', btc: 95600, fed: 4.50, dxy: 107.8, spread: 325, liq: 50, lth: 59, qqq: 565},
+            {date: '2025-01', btc: 102800, fed: 4.50, dxy: 108.3, spread: 320, liq: 75, lth: 59, qqq: 580},
+            {date: '2025-02', btc: 98500, fed: 4.50, dxy: 106.2, spread: 325, liq: 25, lth: 59.5, qqq: 570},
+            {date: '2025-03', btc: 85300, fed: 4.50, dxy: 104.1, spread: 340, liq: 25, lth: 60, qqq: 545},
+            {date: '2025-04', btc: 91200, fed: 4.50, dxy: 102.7, spread: 330, liq: 50, lth: 60, qqq: 560},
+            {date: '2025-05', btc: 98700, fed: 4.50, dxy: 101.5, spread: 320, liq: 75, lth: 60, qqq: 575},
+            {date: '2025-06', btc: 93400, fed: 4.50, dxy: 105.3, spread: 335, liq: 25, lth: 60, qqq: 555},
+            {date: '2025-07', btc: 101500, fed: 4.50, dxy: 103.8, spread: 318, liq: 75, lth: 59.5, qqq: 590},
+            {date: '2025-08', btc: 97600, fed: 4.50, dxy: 102.1, spread: 325, liq: 25, lth: 59.5, qqq: 580},
+            {date: '2025-09', btc: 104200, fed: 4.50, dxy: 100.9, spread: 312, liq: 75, lth: 59.5, qqq: 600},
+            {date: '2025-10', btc: 108600, fed: 4.50, dxy: 100.3, spread: 305, liq: 50, lth: 59.5, qqq: 610}
         ];
 
-        function calcScore(fedRate, dxy, hySpread, liquidations, lthSupply) {
-            // Fed Rate: Lower is better for BTC (more liquidity)
-            // Range: 0% = 100 points, 5.5% = 0 points
-            var fedScore = Math.max(0, Math.min(100, 100 - (fedRate * 18.18)));
+        var currentFilter = 'all';
+        var metricChart, trendChart, btcChart;
+
+        function calculateScore(fed, qqq, lth, dxy, hySpread, liq) {
+            var fedScore = 100 - (fed * 18.18);
+            var qqqScore = (qqq - 180) / 4.4;
+            var lthScore;
+            if (lth < 59) {
+                lthScore = 25 + ((lth - 56) * 25);
+            } else if (lth >= 59 && lth < 63) {
+                lthScore = 100;
+            } else {
+                lthScore = 100 - ((lth - 63) * 12.5);
+            }
+            var dxyScore = 100 - ((dxy - 89) * 3.846);
+            var hyScore = 100 - ((hySpread - 300) * 0.125);
+            var liqScore = parseFloat(liq);
             
-            // DXY: Lower is better for BTC (weaker dollar)
-            // Range: 89 = 100 points, 115 = 0 points
-            var dxyScore = Math.max(0, Math.min(100, 100 - ((dxy - 89) * 3.846)));
-            
-            // HY Spreads: Lower is better (risk-on environment)
-            // Range: 300 = 100 points, 1100 = 0 points
-            var hyScore = Math.max(0, Math.min(100, 100 - ((hySpread - 300) * 0.125)));
-            
-            // Liquidations: 75 = bullish, 25 = bearish, 50 = neutral
-            var liqScore = liquidations;
-            
-            // LTH Supply: INVERTED - Lower is better (distribution complete = rally ready)
-            // Range: 67% = 0 points (top/distribution), 56% = 100 points (bottom/ready to rally)
-            var lthScore = Math.max(0, Math.min(100, ((67 - lthSupply) * 9.09)));
-            
-            // Weights: Fed and LTH are most important
-            var composite = (fedScore * 0.40) + (lthScore * 0.25) + (dxyScore * 0.15) + (hyScore * 0.10) + (liqScore * 0.10);
+            var composite = (fedScore * 0.30) + (qqqScore * 0.20) + (lthScore * 0.20) + (dxyScore * 0.15) + (hyScore * 0.10) + (liqScore * 0.05);
             
             return {
-                composite: composite,
-                breakdown: {
-                    fed: fedScore * 0.40,
-                    dxy: dxyScore * 0.15,
-                    hy: hyScore * 0.10,
-                    liq: liqScore * 0.10,
-                    lth: lthScore * 0.25
-                }
+                composite: Math.max(0, Math.min(100, composite)),
+                fed: Math.max(0, Math.min(100, fedScore)),
+                qqq: Math.max(0, Math.min(100, qqqScore)),
+                lth: Math.max(0, Math.min(100, lthScore)),
+                dxy: Math.max(0, Math.min(100, dxyScore)),
+                hy: Math.max(0, Math.min(100, hyScore)),
+                liq: liqScore
             };
         }
 
-        function initCharts() {
-            var trendCtx = document.getElementById('trendChart').getContext('2d');
-            trendChart = new Chart(trendCtx, {
-                type: 'line',
-                data: {
-                    labels: [new Date().toLocaleTimeString()],
-                    datasets: [{
-                        label: 'Sentiment Score',
-                        data: [50.0],
-                        borderColor: 'rgb(124, 58, 237)',
-                        backgroundColor: 'rgba(124, 58, 237, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, max: 100, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
-                        x: { grid: { display: false } }
-                    }
-                }
-            });
+        function updateScore() {
+            var fed = parseFloat(document.getElementById('fedRate').value);
+            var qqq = parseFloat(document.getElementById('qqq').value);
+            var lth = parseFloat(document.getElementById('lth').value);
+            var dxy = parseFloat(document.getElementById('dxy').value);
+            var hySpread = parseFloat(document.getElementById('hySpread').value);
+            var liq = document.getElementById('liq').value;
+            
+            var scores = calculateScore(fed, qqq, lth, dxy, hySpread, liq);
+            var composite = scores.composite;
+            
+            document.getElementById('scoreValue').textContent = composite.toFixed(0);
+            
+            var scoreDisplay = document.getElementById('scoreDisplay');
+            var scoreLabel = document.getElementById('scoreLabel');
+            
+            scoreDisplay.className = '';
+            if (composite >= 80) {
+                scoreDisplay.className = 'score-excellent rounded-xl p-6 inline-block min-w-[200px]';
+                scoreLabel.textContent = 'Excellent';
+            } else if (composite >= 60) {
+                scoreDisplay.className = 'score-good rounded-xl p-6 inline-block min-w-[200px]';
+                scoreLabel.textContent = 'Good';
+            } else if (composite >= 40) {
+                scoreDisplay.className = 'score-neutral rounded-xl p-6 inline-block min-w-[200px]';
+                scoreLabel.textContent = 'Neutral';
+            } else if (composite >= 20) {
+                scoreDisplay.className = 'score-poor rounded-xl p-6 inline-block min-w-[200px]';
+                scoreLabel.textContent = 'Poor';
+            } else {
+                scoreDisplay.className = 'score-terrible rounded-xl p-6 inline-block min-w-[200px]';
+                scoreLabel.textContent = 'Terrible';
+            }
+            
+            updateMetricChart(scores);
+        }
 
-            var breakdownCtx = document.getElementById('breakdownChart').getContext('2d');
-            breakdownChart = new Chart(breakdownCtx, {
+        function updateMetricChart(scores) {
+            var ctx = document.getElementById('metricChart').getContext('2d');
+            
+            if (metricChart) {
+                metricChart.destroy();
+            }
+            
+            metricChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Fed Rate (40%)', 'DXY (20%)', 'HY Spreads (10%)', 'Liquidations (15%)', 'LTH Supply (15%)'],
+                    labels: ['Fed Rate (30%)', 'QQQ (20%)', 'LTH Supply (20%)', 'DXY (15%)', 'HY Spreads (10%)', 'Liquidations (5%)'],
                     datasets: [{
-                        label: 'Weighted Score',
-                        data: [20, 10, 5, 7.5, 7.5],
+                        label: 'Score',
+                        data: [scores.fed, scores.qqq, scores.lth, scores.dxy, scores.hy, scores.liq],
                         backgroundColor: [
-                            'rgba(124, 58, 237, 0.8)',
-                            'rgba(99, 102, 241, 0.8)',
+                            'rgba(147, 51, 234, 0.8)',
                             'rgba(59, 130, 246, 0.8)',
-                            'rgba(14, 165, 233, 0.8)',
-                            'rgba(6, 182, 212, 0.8)'
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(236, 72, 153, 0.8)'
                         ],
                         borderColor: [
-                            'rgb(124, 58, 237)',
-                            'rgb(99, 102, 241)',
-                            'rgb(59, 130, 246)',
-                            'rgb(14, 165, 233)',
-                            'rgb(6, 182, 212)'
+                            'rgba(147, 51, 234, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(245, 158, 11, 1)',
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(236, 72, 153, 1)'
                         ],
                         borderWidth: 2
                     }]
@@ -449,228 +424,262 @@
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
                     scales: {
-                        x: { beginAtZero: true, max: 40, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
-                        y: { grid: { display: false } }
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.8)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.8)'
+                            }
+                        }
                     }
                 }
             });
+        }
 
-            var dailyCtx = document.getElementById('dailyChart').getContext('2d');
-            dailyChart = new Chart(dailyCtx, {
+        function filterData(year) {
+            currentFilter = year;
+            updateCharts();
+        }
+
+        function getFilteredData() {
+            if (currentFilter === 'all') {
+                return historicalData;
+            }
+            return historicalData.filter(function(d) {
+                return d.date.startsWith(currentFilter);
+            });
+        }
+
+        function calculateCorrelation(x, y) {
+            var n = x.length;
+            var sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
+            
+            for (var i = 0; i < n; i++) {
+                sumX += x[i];
+                sumY += y[i];
+                sumXY += x[i] * y[i];
+                sumX2 += x[i] * x[i];
+                sumY2 += y[i] * y[i];
+            }
+            
+            var numerator = (n * sumXY) - (sumX * sumY);
+            var denominator = Math.sqrt(((n * sumX2) - (sumX * sumX)) * ((n * sumY2) - (sumY * sumY)));
+            
+            return numerator / denominator;
+        }
+
+        function updateCharts() {
+            var filteredData = getFilteredData();
+            
+            var dates = [];
+            var scores = [];
+            var btcPrices = [];
+            
+            for (var i = 0; i < filteredData.length; i++) {
+                var d = filteredData[i];
+                dates.push(d.date);
+                var s = calculateScore(d.fed, d.qqq, d.lth, d.dxy, d.spread, d.liq);
+                scores.push(s.composite);
+                btcPrices.push(d.btc);
+            }
+            
+            var correlation = calculateCorrelation(scores, btcPrices);
+            document.getElementById('correlationValue').textContent = correlation.toFixed(3);
+            
+            var ctx1 = document.getElementById('trendChart').getContext('2d');
+            if (trendChart) {
+                trendChart.destroy();
+            }
+            
+            trendChart = new Chart(ctx1, {
                 type: 'line',
                 data: {
-                    labels: [],
+                    labels: dates,
                     datasets: [{
-                        label: 'BTC Price',
-                        data: [],
-                        borderColor: 'rgb(249, 115, 22)',
-                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        yAxisID: 'y'
-                    }, {
                         label: 'Sentiment Score',
-                        data: [],
-                        borderColor: 'rgb(124, 58, 237)',
-                        backgroundColor: 'rgba(124, 58, 237, 0.1)',
-                        tension: 0.4,
+                        data: scores,
+                        borderColor: 'rgba(147, 51, 234, 1)',
+                        backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                        borderWidth: 3,
                         fill: true,
-                        yAxisID: 'y1'
+                        tension: 0.4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: { legend: { display: true, position: 'top' } },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    },
                     scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.8)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            var ctx2 = document.getElementById('btcChart').getContext('2d');
+            if (btcChart) {
+                btcChart.destroy();
+            }
+            
+            btcChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Bitcoin Price ($)',
+                        data: btcPrices,
+                        borderColor: 'rgba(245, 158, 11, 1)',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        borderWidth: 3,
+                        yAxisID: 'y',
+                        tension: 0.4
+                    }, {
+                        label: 'Sentiment Score',
+                        data: scores,
+                        borderColor: 'rgba(147, 51, 234, 1)',
+                        backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                        borderWidth: 3,
+                        yAxisID: 'y1',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
                         y: {
                             type: 'linear',
                             display: true,
                             position: 'left',
-                            title: { display: true, text: 'BTC Price ($)', color: 'rgb(249, 115, 22)', font: { weight: 'bold' } },
-                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                            title: {
+                                display: true,
+                                text: 'Bitcoin Price ($)',
+                                color: 'rgba(245, 158, 11, 1)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(245, 158, 11, 0.9)'
+                            }
                         },
                         y1: {
                             type: 'linear',
                             display: true,
                             position: 'right',
-                            title: { display: true, text: 'Sentiment Score', color: 'rgb(124, 58, 237)', font: { weight: 'bold' } },
+                            title: {
+                                display: true,
+                                text: 'Sentiment Score',
+                                color: 'rgba(147, 51, 234, 1)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            ticks: {
+                                color: 'rgba(147, 51, 234, 0.9)'
+                            },
                             min: 0,
-                            max: 100,
-                            grid: { drawOnChartArea: false }
-                        },
-                        x: { grid: { display: false } }
+                            max: 100
+                        }
                     }
                 }
             });
         }
 
-        function updateScore() {
-            var fedRate = parseFloat(document.getElementById('fedRate').value);
-            var dxy = parseFloat(document.getElementById('dxy').value);
-            var hySpread = parseFloat(document.getElementById('hySpread').value);
-            var liquidations = parseFloat(document.getElementById('liquidations').value);
-            var lthSupply = parseFloat(document.getElementById('lthSupply').value);
-            var result = calcScore(fedRate, dxy, hySpread, liquidations, lthSupply);
-            var score = result.composite;
-
-            document.getElementById('compositeScore').textContent = score.toFixed(1);
-            var scoreDisplay = document.getElementById('scoreDisplay');
-            var sentimentLabel = document.getElementById('sentimentLabel');
-            scoreDisplay.className = 'text-white rounded-xl p-8 mb-6 text-center shadow-lg ';
-
-            if (score >= 80) {
-                scoreDisplay.classList.add('sentiment-excellent');
-                sentimentLabel.textContent = 'EXCELLENT';
-            } else if (score >= 60) {
-                scoreDisplay.classList.add('sentiment-good');
-                sentimentLabel.textContent = 'GOOD';
-            } else if (score >= 40) {
-                scoreDisplay.classList.add('sentiment-neutral');
-                sentimentLabel.textContent = 'NEUTRAL';
-            } else if (score >= 20) {
-                scoreDisplay.classList.add('sentiment-poor');
-                sentimentLabel.textContent = 'POOR';
-            } else {
-                scoreDisplay.classList.add('sentiment-terrible');
-                sentimentLabel.textContent = 'TERRIBLE';
-            }
-
-            breakdownChart.data.datasets[0].data = [
-                result.breakdown.fed,
-                result.breakdown.dxy,
-                result.breakdown.hy,
-                result.breakdown.liq,
-                result.breakdown.lth
-            ];
-            breakdownChart.update();
-        }
-
-        function addToHistory() {
-            var fedRate = parseFloat(document.getElementById('fedRate').value);
-            var dxy = parseFloat(document.getElementById('dxy').value);
-            var hySpread = parseFloat(document.getElementById('hySpread').value);
-            var liquidations = parseFloat(document.getElementById('liquidations').value);
-            var lthSupply = parseFloat(document.getElementById('lthSupply').value);
-            var result = calcScore(fedRate, dxy, hySpread, liquidations, lthSupply);
-            var timestamp = new Date();
-
-            historyData.push({ timestamp: timestamp.toISOString(), score: result.composite });
-            if (historyData.length > 20) { historyData.shift(); }
-
-            trendChart.data.labels = historyData.map(function(d) { return new Date(d.timestamp).toLocaleTimeString(); });
-            trendChart.data.datasets[0].data = historyData.map(function(d) { return d.score; });
-            trendChart.update();
-        }
-
-        function loadHistoricalData() {
-            allHistoricalData = [];
-            for (var i = 0; i < historicalDataset.length; i++) {
-                var dataPoint = historicalDataset[i];
-                var result = calcScore(dataPoint.fedRate, dataPoint.dxy, dataPoint.hySpread, dataPoint.liq, dataPoint.lth);
-                allHistoricalData.push({
-                    date: dataPoint.date,
-                    btcPrice: dataPoint.btcPrice,
-                    sentimentScore: result.composite
-                });
-            }
-            dailyData = allHistoricalData.slice();
-            updateDailyChart();
-            calculateCorrelation();
-        }
-
-        function filterDateRange() {
-            var range = document.getElementById('dateRange').value;
-            if (range === 'all') {
-                dailyData = allHistoricalData.slice();
-            } else {
-                dailyData = [];
-                for (var i = 0; i < allHistoricalData.length; i++) {
-                    if (allHistoricalData[i].date.indexOf(range) === 0) {
-                        dailyData.push(allHistoricalData[i]);
-                    }
-                }
-            }
-            updateDailyChart();
-            calculateCorrelation();
-        }
-
-        function calculateCorrelation() {
-            if (dailyData.length < 2) {
-                document.getElementById('correlationValue').textContent = 'N/A';
-                return;
-            }
-            var prices = [];
-            var scores = [];
-            for (var i = 0; i < dailyData.length; i++) {
-                prices.push(dailyData[i].btcPrice);
-                scores.push(dailyData[i].sentimentScore);
-            }
-            var n = prices.length;
-            var sumX = 0;
-            var sumY = 0;
-            var sumXY = 0;
-            var sumX2 = 0;
-            var sumY2 = 0;
-            for (var i = 0; i < n; i++) {
-                sumX += prices[i];
-                sumY += scores[i];
-                sumXY += prices[i] * scores[i];
-                sumX2 += prices[i] * prices[i];
-                sumY2 += scores[i] * scores[i];
-            }
-            var correlation = (n * sumXY - sumX * sumY) / Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
-            document.getElementById('correlationValue').textContent = correlation.toFixed(3);
-        }
-
-        function updateDailyChart() {
-            var labels = [];
-            var priceData = [];
-            var scoreData = [];
-            for (var i = 0; i < dailyData.length; i++) {
-                var date = new Date(dailyData[i].date);
-                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' }));
-                priceData.push(dailyData[i].btcPrice);
-                scoreData.push(dailyData[i].sentimentScore);
-            }
-            dailyChart.data.labels = labels;
-            dailyChart.data.datasets[0].data = priceData;
-            dailyChart.data.datasets[1].data = scoreData;
-            dailyChart.update();
-            document.getElementById('dataPointCount').textContent = dailyData.length;
-        }
-
         function switchTab(tab) {
-            var dashboardTab = document.getElementById('dashboardTab');
-            var learnTab = document.getElementById('learnTab');
-            var dashboardContent = document.getElementById('dashboardContent');
-            var learnContent = document.getElementById('learnContent');
-
             if (tab === 'dashboard') {
-                dashboardTab.classList.add('tab-active');
-                dashboardTab.classList.remove('hover:bg-gray-100');
-                learnTab.classList.remove('tab-active');
-                learnTab.classList.add('hover:bg-gray-100');
-                dashboardContent.classList.remove('hidden');
-                learnContent.classList.add('hidden');
+                document.getElementById('content-dashboard').style.display = 'block';
+                document.getElementById('content-learn').style.display = 'none';
+                document.getElementById('tab-dashboard').className = 'tab-active px-6 py-3 text-white font-semibold transition-all';
+                document.getElementById('tab-learn').className = 'px-6 py-3 text-white font-semibold transition-all hover:bg-white hover:bg-opacity-10';
             } else {
-                learnTab.classList.add('tab-active');
-                learnTab.classList.remove('hover:bg-gray-100');
-                dashboardTab.classList.remove('tab-active');
-                dashboardTab.classList.add('hover:bg-gray-100');
-                learnContent.classList.remove('hidden');
-                dashboardContent.classList.add('hidden');
+                document.getElementById('content-dashboard').style.display = 'none';
+                document.getElementById('content-learn').style.display = 'block';
+                document.getElementById('tab-learn').className = 'tab-active px-6 py-3 text-white font-semibold transition-all';
+                document.getElementById('tab-dashboard').className = 'px-6 py-3 text-white font-semibold transition-all hover:bg-white hover:bg-opacity-10';
             }
         }
 
-        window.addEventListener('load', function() {
-            initCharts();
+        window.onload = function() {
             updateScore();
-            loadHistoricalData();
-        });
+            updateCharts();
+        };
     </script>
 </body>
 </html>
