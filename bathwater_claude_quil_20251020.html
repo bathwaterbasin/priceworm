@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUIL Cryptocurrency Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+        
+        .credit {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            display: inline-block;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 45px;
+        }
+        
+        .section h2 {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 5px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .section h3 {
+            font-size: 1.3em;
+            color: #555;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .metric {
+            background: #f8f9ff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+            border-radius: 6px;
+        }
+        
+        .metric-title {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1.05em;
+            margin-bottom: 8px;
+        }
+        
+        .metric-value {
+            font-size: 1.2em;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .metric-reasoning {
+            font-size: 0.95em;
+            color: #666;
+            font-style: italic;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            margin-top: 10px;
+        }
+        
+        .bullet-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .bullet-list li {
+            padding: 8px 0 8px 25px;
+            position: relative;
+        }
+        
+        .bullet-list li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .strengths {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+        
+        .strengths .metric-title {
+            color: #2e7d32;
+        }
+        
+        .concerns {
+            background: #fff3e0;
+            border-left-color: #ff9800;
+        }
+        
+        .concerns .metric-title {
+            color: #e65100;
+        }
+        
+        .risk-high {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+        
+        .risk-high .metric-title {
+            color: #c62828;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9ff;
+        }
+        
+        .prompt-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 40px;
+        }
+        
+        .prompt-section h2 {
+            color: white;
+            border-bottom-color: white;
+            margin-bottom: 20px;
+        }
+        
+        .prompt-box {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.8;
+            margin: 15px 0;
+            border-left: 4px solid rgba(255, 255, 255, 0.5);
+            overflow-x: auto;
+        }
+        
+        .copy-button {
+            background: white;
+            color: #f5576c;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+        
+        .copy-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .spotlight {
+            background: #fff9c4;
+            border-left: 4px solid #fbc02d;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        footer {
+            background: #f5f5f5;
+            padding: 20px 40px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            border-top: 1px solid #ddd;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .section h2 {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⛓️ QUIL Token Analysis</h1>
+            <p>Comprehensive Quantitative & Qualitative Analysis of Quilibrium</p>
+            <div class="credit">
+                Made with Claude AI by Bathwater
+            </div>
+        </header>
+        
+        <div class="content">
+            <!-- Project Overview -->
+            <div class="section">
+                <h2>Project Overview</h2>
+                <p>Quilibrium is a decentralized internet layer protocol designed to offer the comforts of cloud computing without compromising on privacy or scalability. Think of it as a decentralized alternative to traditional cloud providers like AWS, Azure, and Google Cloud, but with privacy-first architecture.</p>
+                
+                <div class="metric">
+                    <div class="metric-title">What We're Analyzing & Why</div>
+                    <div class="metric-reasoning">
+                        We evaluate cryptocurrencies across multiple dimensions to assess investment potential: tokenomics reveal economic sustainability, team quality predicts execution capability, feasibility indicates technical viability, roadmap transparency shows commitment, deliverables prove progress, and market opportunity suggests upside potential. Together, these provide a holistic risk assessment.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tokenomics Section -->
+            <div class="section">
+                <h2>Tokenomics</h2>
+                
+                <div class="metric">
+                    <div class="metric-title">Distribution Model: 100% Fair Launch</div>
+                    <div class="metric-value">No VC, No Airdrops, No Vesting</div>
+                    <div class="metric-reasoning">
+                        <strong>Why This Matters:</strong> Fair launches eliminate early investor advantage and potential pump-and-dump schemes. All tokens are earned through network participation (node operation), which incentivizes genuine utility. This is extremely rare in crypto and suggests the team prioritizes long-term value over quick exits. However, it also means no institutional backing for growth funding.
+                    </div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-title">Team Ownership</div>
+                    <div class="metric-value">&lt;1% of Total Supply (Q Inc.)</div>
+                    <div class="metric-reasoning">
+                        <strong>Why This Matters:</strong> Minimal team ownership reduces conflict of interest and incentive misalignment. The team profits from network success, not token appreciation. This builds community trust but also means founders have less skin in the game relative to early community members. Compare this to projects where founders hold 20-50%, which often signals extraction risk.
+                    </div>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Current (Oct 2025)</th>
+                            <th>Projected Timeline</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Circulating Supply</td>
+                            <td>~860M QUIL</td>
+                            <td>-</td>
+                            <td>Growing at ~1.5M daily</td>
+                        </tr>
+                        <tr>
+                            <td>Projected Total Supply</td>
+                            <td>1.6-1.7B by 2029</td>
+                            <td>2B by 2035</td>
+                            <td>Dynamic based on network adoption</td>
+                        </tr>
+                        <tr>
+                            <td>Current Market Cap</td>
+                            <td>~$38M USD</td>
+                            <td>-</td>
+                            <td>Token price: $0.043</td>
+                        </tr>
+                        <tr>
+                            <td>All-Time High</td>
+                            <td>$0.451</td>
+                            <td>Historical peak</td>
+                            <td>Currently trading at ~90% discount from ATH</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="metric">
+                    <div class="metric-title">Dynamic Supply Model</div>
+                    <div class="metric-value">Uncapped Supply with Adaptive Emissions</div>
+                    <div class="metric-reasoning">
+                        <strong>Why This Matters:</strong> Unlike Bitcoin's fixed 21M cap or Ethereum's inflation schedule, QUIL's supply adjusts based on network adoption. More network activity = more QUIL emissions to incentivize node operators. This is theoretically sound (rewards genuine utility) but creates valuation uncertainty. You can't simply calculate "scarcity" like you can with Bitcoin. It's similar to Proof-of-Stake protocols that dynamically adjust staking rewards. The downside: token supply could expand significantly if network adoption explodes, which dilutes existing holders.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Team Section -->
+            <div class="section">
+                <h2>Project Team</h2>
+                
+                <div class="metric strengths">
+                    <div class="metric-title">✓ Strong Leadership</div>
+                    <div class="metric-value">Cassie Heart - Founder & CEO</div>
+                    <div class="metric-reasoning">
+                        <strong>Background:</strong> Former senior engineer at Coinbase, developer of Farcaster, 12+ years blockchain/software experience. <br>
+                        <strong>Why This Matters:</strong> Coinbase experience shows enterprise-scale systems thinking. Farcaster involvement proves she can build products users actually adopt (Farcaster has organic traction). Her 310K Farcaster followers (including Vitalik) indicate community respect. This is credible leadership by crypto standards.
+                    </div>
+                </div>
+                
+                <div class="metric concerns">
+                    <div class="metric-title">⚠ Team Size Risk</div>
+                    <div class="metric-value">~24 Developers Listed</div>
+                    <div class="metric-reasoning">
+                        <strong>Why This Matters:</strong> For a project attempting to build decentralized cloud computing infrastructure, 24 developers is quite small. Compare: Ethereum had 100+ core devs pre-launch. This creates execution risk—team burnout, key person dependencies (what if Cassie leaves?), limited ability to handle bugs at scale. However, quality > quantity; Cassie's demonstrated track record suggests strong hiring judgment.
+                    </div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-title">No Institutional Backing Disclosed</div>
+                    <div class="metric-value">Self-Funded / Community Funded</div>
+                    <div class="metric-reasoning">
+                        <strong>Why This Matters:</strong> No VC backing means no runway from institutional capital—the team must be self-sustaining. This is both a strength (independence, less investor pressure to monetize/exit) and weakness (limited capital for hiring, marketing, infrastructure). Traditional VC-backed projects can afford to hire 100+ people during testnet phases; Quilibrium scales differently. This explains the small team and deliberate release schedule.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feasibility Section -->
+            <div class="section">
+                <h2>Project Feasibility</h2>
+                
+                <div class="metric strengths">
+                    <div class="metric-title">✓ Regulatory Compliance</div>
+                    <div class="metric-value">FIT21 Compliant Framework</div>
+                    <div class="metric-reasoning">
+                        <strong>Why This Matters:</strong> FIT21 is a US-approved regulatory framework for crypto. Quilibrium's design meets these requirements, meaning it qualifies as a decentralized protocol under US law. This reduces regulatory risk compared to projects explicitly designed to evade rules. Long-term, this could make Quilibrium attractive to institutions that need legal clarity.
+                    </div>
+                </div>
+                
+                <div class="metric concerns">
+                    <div class="metric-title">⚠ Pre-Mainnet Status</div>
+                    <div class="metric-value">Technology Not Yet Proven at Scale</div>
+                    <div class="metric-reasoning">
+                        <strong>Why This Matters:</strong> This is a MAJOR risk. Until mainnet launches and runs under real load with real users, we don't know if the technology works. Quilibrium's architecture (oblivious hypergraph sharding, triple-ratchet encryption, verifiable delay functions) is theoretically sound but unproven in production. Many projects fail at the mainnet launch phase because assumptions don't hold at scale. See Solana's early mainnet issues or ICP's 2022 network stress tests.
+                    </div>
+                </div>
+                
+                <div class="metric concerns">
+                    <div class="metric-title">⚠ Project Complexity</div>
+                    <div class="metric-value">Cutting-Edge Cryptography + P2P Infrastructure</div>
+                    <div class="metric-reasoning">
+                        <strong>Why This Matters:</strong> Quilibrium uses advanced concepts (VDFs, oblivious transfer, sharded hypergraphs) that most developers don't understand. This creates concentration risk—if Cassie is the primary architect and something goes wrong, there's limited institutional knowledge to fix it. Simple projects can survive poor architecture decisions; complex ones cannot. This is why execution track record is so important.
+                    </div>
+                </div>
+                
+                <div class="metric concerns">
+                    <div class="metric-title">⚠ Competitive Landscape</div>
+                    <div class="metric-value">Arweave AO, ICP, and Others</div>
+                    <div class="metric-reasoning">
+                        <strong>Why This Matters:</strong> Quilibrium isn't the first to pursue decentralized computing. Arweave has $1B+ market cap and proven throughput. ICP (Internet Computer) launched mainnet in 2021 and has struggled with adoption. Quilibrium must differentiate on privacy and performance. Being late isn't fatal (see Ethereum vs Bitcoin), but it means the incumbent has brand awareness advantage. Early adopters might already have committed to competing platforms.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Roadmap Section -->
+            <div class="section">
+                <h2>Delivery Roadmap</h2>
+                
+                <h3>Three-Phase Architecture</h3>
+                <p style="margin-bottom: 20px;">Quilibrium structures development in phases, releasing features incrementally and validating assumptions at each stage.</p>
+                
+                <div class="metric">
+                    <div class="metric-title">Phase 1: Dusk (Current / Near-Complete)</div>
+                    <div class="metric-value">Mainnet Foundation - v2.0 Launch Imminent</div>
+                    <div class="metric-reasoning">
+                        <strong>What's Happening:</strong> Network hardening, privacy layer completion, cross-chain bridge to Ethereum. v1.4.20 live; v2.0 (mainnet) release planned. Skipping v1.5 to accelerate mainnet.<br>
+                        <strong>Why This Matters:</strong> Mainnet launch is the critical event. Dusk phase completion proves the team can execute major milestones on schedule. However, dates have slipped before (initially expected July 2024, now October 2025)—normal in crypto, but shows estimation challenges.
+                    </div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-title">Phase 2: Equinox (Q1-Q2 2025 Projected)</div>
+                    <div class="metric-value">Developer Ecosystem & Applications</div>
+                    <div class="metric-reasoning">
+                        <strong>What's Happening:</strong> Developer documentation, fundamental services (file storage like S3, executable code, domain services). Application templates and SDKs.<br>
+                        <strong>Why This Matters:</strong> Mainnet means nothing without applications. Equinox determines whether devs actually build on Quilibrium or abandon it for Arweave/ICP. This phase will show market demand. Many "promising" blockchains fail here because developers don't see utility or run into UX friction.
+                    </div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-title">Phase 3: Event Horizon (Q3-Q4 2025+)</div>
+                    <div class="metric-value">Advanced Capabilities (Streaming, AI/ML)</div>
+                    <div class="metric-reasoning">
+                        <strong>What's Happening:</strong> GPU-intensive computation primitives, streaming support, AI/ML model training infrastructure.<br>
+                        <strong>Why This Matters:</strong> AI/ML training is computationally demanding and lucrative (worth $100B+ annually). If Quilibrium cracks this, QUIL demand could spike dramatically. However, GPUs are expensive to coordinate across a decentralized network—significant technical challenge remains.
+                    </div>
+                </div>
+                
+                <div class="spotlight">
+                    <strong>Roadmap Transparency:</strong> Quilibrium publishes detailed technical posts explaining each release. This transparency is good for trust but also creates accountability—missed deadlines become public. The team has shown willingness to adjust plans (skipping v1.5) rather than release broken code, which is encouraging.
+                </div>
+            </div>
+            
+            <!-- Deliverables Section -->
+            <div class="section">
+                <h2>Deliverables to Date</h2>
+                
+                <div class="metric">
+                    <div class="metric-title">Development Timeline</div>
+                    <div class="metric-value">Active Development Since April 2023 (~18 months)</div>
+                    <div class="metric-reasoning">
+                        <strong>Why This Matters:</strong> 18 months is young for infrastructure. Ethereum's testnet was years before mainnet. That said, Quilibrium has moved faster than ICP did at comparable stages. Bi-weekly releases show consistent shipping cadence. This indicates functional development, not vaporware.
+                    </div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-title">Community Applications</div>
+                    <div class="metric-value">Howler (Discord Alt), NFTs, Node Managers, DEX</div>
+                    <div class="metric-reasoning">
+                        <strong>Why This Matters:</strong> Real developers building real apps on testnet. Howler (a Discord alternative built on Quilibrium) demonstrates the platform can support production-grade applications. This is not theoretical—there's working code. However, these are early-stage projects with limited users. Success will be measured by actual adoption metrics (DAU, TVL, transaction volume) post-mainnet.
+                    </div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-title">Documentation & Tooling</div>
+                    <div class="metric-value">QCL SDK, Local Simulator, API docs</div>
+                    <div class="metric-reasoning">
+                        <strong>Why This Matters:</strong> Developer experience is critical for adoption. Good SDKs and docs remove friction. Quilibrium is building developer-friendly infrastructure (similar to how Ethereum's Ethers.js and web3.py were crucial to adoption). Still work in progress, but moving in the right direction.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Growth Analysis -->
+            <div class="section">
+                <h2>Growth Potential (Next 4 Years)</h2>
+                
+                <h3>Bull Case Thesis</h3>
+                <ul class="bullet-list">
+                    <li><strong>Market Size:</strong> Cloud computing is $200B+ annually. If Quilibrium captures even 1% of decentralized cloud share, that's massive.</li>
+                    <li><strong>Privacy Tailwinds:</strong> Regulations (GDPR, CCPA) increasing privacy demand. Enterprise data often can't go to Amazon/Google for compliance reasons.</li>
+                    <li><strong>AI Opportunity:</strong> GPU-based ML training and inference is a multi-hundred billion opportunity. If Quilibrium becomes the "decentralized GPU cloud," QUIL could become fundamental infrastructure.</li>
+                    <li><strong>Farcaster Synergy:</strong> Cassie's involvement in Farcaster creates distribution channel. Farcaster developers could become early Quilibrium adopters.</li>
+                    <li><strong>Fair Launch Appeal:</strong> Many institutional investors are skeptical of heavily VC-backed projects. Quilibrium's fair launch and <1% team ownership appeal to principles-focused capital.</li>
+                </ul>
+                
+                <h3>Bear Case Thesis</h3>
+                <ul class="bullet-list">
+                    <li><strong>Execution Risk:</strong> Mainnet hasn't launched. Complex technology unproven at scale. Team is small. Many projects fail here.</li>
+                    <li><strong>Developer Adoption:</strong> Why would developers choose Quilibrium over ICP or Arweave (established, larger communities)? Switching costs are real.</li>
+                    <li><strong>Network Effects Delay:</strong> Cloud computing has strong network effects—Amazon/Azure have locked in enterprise relationships. Quilibrium starts at zero.</li>
+                    <li><strong>Economic Model Unproven:</strong> Can node operators actually profit running Quilibrium nodes? If not, network security suffers. This is untested.</li>
+                    <li><strong>Token Dilution:</strong> Dynamic supply means unlimited issuance potential. If adoption accelerates, QUIL supply could balloon, limiting price appreciation.</li>
+                </ul>
+                
+                <div class="metric risk-high">
+                    <div class="metric-title">⚠ 4-Year Price Target (Speculative)</div>
+                    <div class="metric-value">Bull Case: $0.50-$5.00 | Base Case: $0.10-$0.50 | Bear Case: $0.01-$0.10</div>
+                    <div class="metric-reasoning">
+                        <strong>Why These Ranges?</strong> Bull case assumes mainnet succeeds, adoption accelerates, and QUIL becomes infrastructure utility. This would justify $1B+ market cap ($1.16-$5.81/token at current circulation). Base case assumes modest success—profitable network, niche enterprise users, limited mainstream adoption. Bear case assumes mainnet delays persist, developer adoption is anemic, and QUIL becomes a collector's item for privacy advocates rather than infrastructure utility. Given early-stage risk, 80-90% downside is plausible. But 10-100x upside is also plausible if execution succeeds.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Risk Assessment -->
+            <div class="section">
+                <h2>Risk Assessment</h2>
+                
+                <div class="metric risk-high">
+                    <div class="metric-title">Overall Risk Level: VERY HIGH</div>
+                    <div class="metric-value">Suitable only for high-risk, high-return portfolios</div>
+                    <div class="metric-reasoning">
+                        This is not a mischaracterization. Quilibrium is pre-mainnet infrastructure with <1% of the market cap of mature infrastructure projects. Key risks include: mainnet launch delays or failures, team concentration (Cassie), adoption uncertainty, competitive displacement, dynamic supply dilution, and unproven economic model. You should only invest what you can afford to lose entirely.
+                    </div>
+                </div>
+                
+                <h3>Key Risk Factors Ranked by Impact</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Risk</th>
+                            <th>Likelihood</th>
+                            <th>Impact</th>
+                            <th>Mitigation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mainnet Launch Delays/Failures</td>
+                            <td>Medium</td>
+                            <td>Catastrophic</td>
+                            <td>Watch beta metrics; participate in testnet</td>
+                        </tr>
+                        <tr>
+                            <td>Low Developer Adoption</td>
+                            <td>Medium-High</td>
+                            <td>Critical</td>
+                            <td>Monitor GitHub commits; track app launches</td>
+                        </tr>
+                        <tr>
+                            <td>Regulatory Action</td>
+                            <td>Low</td>
+                            <td>Critical</td>
+                            <td>Token is FIT21 compliant; low regulation risk</td>
+                        </tr>
+                        <tr>
+                            <td>Competitive Displacement (Arweave/ICP)</td>
+                            <td>Medium</td>
+                            <td>High</td>
+                            <td>Differentiate on privacy; build killer app</td>
+                        </tr>
+                        <tr>
+                            <td>Token Supply Dilution</td>
+                            <td>High (if successful)</td>
+                            <td>Medium</td>
+                            <td>This is expected in PoMW; plan for it</td>
+                        </tr>
+                        <tr>
+                            <td>Team Key Person Dependency</td>
+                            <td>Medium</td>
+                            <td>High</td>
+                            <td>Monitor for team expansion announcements</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Prompt Section -->
+            <div class="prompt-section">
+                <h2>Analyze Any Token Using This Framework</h2>
+                <p style="margin-bottom: 20px;">Use the following prompt to analyze any cryptocurrency token using the same quantitative and qualitative methodology as this QUIL analysis:</p>
+                
+                <div class="prompt-box" id="prompt-text">Provide a comprehensive analysis of the cryptocurrency token [TOKEN_NAME/SYMBOL] across these dimensions:
+
+1. **TOKENOMICS** - What is the token distribution model? How many tokens exist? What's the team's ownership stake? Is supply capped or dynamic? Explain your reasoning for why each metric matters for valuation.
+
+2. **PROJECT TEAM** - Who founded this project? What's their track record? How many developers/team members? Any institutional backing? Assess execution capability and concentration risk.
+
+3. **PROJECT FEASIBILITY** - Is the technology proven or experimental? What are the regulatory/technical risks? How does it compare to competitors? Rate likelihood of success.
+
+4. **DELIVERY ROADMAP** - What's the development timeline? What phases/milestones exist? Have they met previous deadlines? How transparent is the team about progress?
+
+5. **DELIVERABLES TO DATE** - What working code/products exist? What's been launched? Are there real users or just testnet activity? What proves progress?
+
+6. **TOKEN DISTRIBUTION** - How were tokens distributed? Was there a fair launch, ICO, airdrops, founder vesting? This matters for insider dumping risk.
+
+7. **GROWTH POTENTIAL (2-4 years)** - What's the bull case? What's the bear case? What market opportunity exists? What price targets are realistic given market cap and adoption scenarios?
+
+For each metric, provide:
+- The quantitative data (numbers, percentages, timelines)
+- Your reasoning for why this metric matters
+- Comparison to competitors where relevant
+- Risk assessment (what could go wrong?)
+
+End with an overall risk rating (LOW/MEDIUM/HIGH/EXTREME) and recommended portfolio allocation guidance.
+
+Format: Structure the analysis with clear headers, bullet points, and a summary table.</div>
+                
+                <button class="copy-button" onclick="copyToClipboard()">📋 Copy Prompt to Clipboard</button>
+            </div>
+            
+            <!-- Why This Framework -->
+            <div class="section">
+                <h2>Why This Analysis Framework?</h2>
+                
+                <p style="margin-bottom: 20px;">This framework evaluates tokens across seven interconnected dimensions. Here's why each matters:</p>
+                
+                <div class="metric">
+                    <div class="metric-title">1. Tokenomics</div>
+                    <div class="metric-reasoning">Reveals economic sustainability. Fixed caps create artificial scarcity (Bitcoin). Dynamic supplies align incentives (Ethereum PoS). Broken tokenomics (Luna, Celsius) destroy value. You need to understand the incentive structures.</div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-title">2. Team</div>
+                    <div class="metric-reasoning">Predicts execution capability. Past performance, domain expertise, team size, and concentration risk matter. Vitalik can deliver; anonymous teams struggle. Small teams move fast but take concentrated risks.</div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-title">3. Feasibility</div>
+                    <div class="metric-reasoning">Assesses technical viability. Is the tech proven or experimental? Are there fundamental scalability/security tradeoffs? Regulatory approval matters. Early-stage tech has lower success rates.</div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-title">4. Roadmap</div>
+                    <div class="metric-reasoning">Shows commitment and execution track record. Transparent roadmaps build trust. Missed deadlines signal problems. Phase gates (testnet → mainnet) validate assumptions incrementally.</div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-title">5. Deliverables</div>
+                    <div class="metric-reasoning">Separates vaporware from real progress. Pre-mainnet, only testnet metrics matter (GitHub commits, community apps, test networks running). Post-mainnet, TVL, DAU, and transaction volume are critical.</div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-title">6. Distribution</div>
+                    <div class="metric-reasoning">Predicts insider dumping risk. Fair launches (100% to users) create aligned incentives. Founder vesting creates cliffs where token supply suddenly increases, suppressing price. Airdrops often signal desperation.</div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-title">7. Growth Potential</div>
+                    <div class="metric-reasoning">Triangulates realistic valuation. Market size × adoption % × per-user economics = potential market cap. Comparing to incumbents (AWS, Arweave) provides benchmarks. Scenario analysis (bull/bear) quantifies risk/reward.</div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p><strong>Disclaimer:</strong> This analysis is for educational purposes only and does not constitute financial advice. Cryptocurrency investments carry extreme risk of total loss. Conduct your own research and consult a financial advisor before investing. All data sourced from public information as of October 2025.</p>
+        </footer>
+    </div>
+    
+    <script>
+        function copyToClipboard() {
+            const promptText = document.getElementById('prompt-text').textContent;
+            navigator.clipboard.writeText(promptText).then(() => {
+                alert('Prompt copied to clipboard! Paste it into Claude or another AI tool to analyze any token.');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+    </script>
+</body>
+</html>
