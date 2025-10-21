@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NOF1 Alpha Arena Tracker</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            margin: 0;
+        }
+        pre {
+            background: #0a0a0a;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        h1 {
+            color: #00ff00;
+            margin-bottom: 10px;
+        }
+        .loading {
+            color: #ffff00;
+        }
+    </style>
+</head>
+<body>
+    <h1>🤖 NOF1.AI ALPHA ARENA</h1>
+    <pre id="output" class="loading">Loading data...</pre>
+    
+    <script>
+        const HYPERLIQUID_API = "https://api.hyperliquid.xyz";
+        
+        const MODELS = {
+            "DeepSeek": {
+                "address": "0xc20ac4dc4188660cbf555448af52694ca62b0734",
+                "initial_capital": 10000
+            },
+            "Grok-4": {
+                "address": "0x56d652e62998251b56c8398fb11fcfe464c08f84",
+                "initial_capital": 10000
+            },
+            "Claude": {
+                "address": "0x59fa085d106541a834017b97060bcbbb0aa82869",
+                "initial_capital": 10000
+            },
+            "GPT-5": {
+                "address": "0x67293d914eafb26878534571add81f6bd2d9fe06",
+                "initial_capital": 10000
+            },
+            "Gemini": {
+                "address": "0x1b7a7d099a670256207a30dd0ae13d35f278010f",
+                "initial_capital": 10000
+            },
+            "Qwen3": {
+                "address": "0x7a8fd8bba33e37361ca6b0cb4518a44681bad2f3",
+                "initial_capital": 10000
+            }
+        };
+        
+        async function getUserFills(walletAddress) {
+            try {
+                const response = await fetch(`${HYPERLIQUID_API}/info`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ type: "userFills", user: walletAddress })
+                });
+                return await response.json();
+            } catch (e) {
+                return null;
+            }
+        }
+        
+        function calculateRealizedPnl(fills) {
+            if (!fills || !Array.isArray(fills)) return 0.0;
+            let realizedPnl = 0.0;
+            fills.forEach(fill => {
+                if (fill.closedPnl) {
+                    realizedPnl += parseFloat(fill.closedPnl);
+                }
+            });
+            return realizedPnl;
+        }
+        
+        async function main() {
+            let output = "\n" + "=".repeat(90) + "\n";
+            output += "🤖  NOF1.AI ALPHA ARENA\n";
+            output += "=".repeat(90) + "\n";
+            output += `⏰  ${new Date().toISOString()}\n\n`;
+            
+            let results = {};
+            
+            for (const [modelName, walletInfo] of Object.entries(MODELS)) {
+                const fills = await getUserFills(walletInfo.address);
+                
+                if (fills && Array.isArray(fills)) {
+                    const realizedPnl = calculateRealizedPnl(fills);
+                    const numTrades = fills.length;
+                    const cashOutValue = walletInfo.initial_capital + realizedPnl;
+                    const returnPct = (realizedPnl / walletInfo.initial_capital * 100);
+                    
+                    results[modelName] = {
+                        realized_pnl: realizedPnl,
+                        return_pct: returnPct,
+                        cash_out_value: cashOutValue,
+                        num_trades: numTrades
+                    };
+                }
+            }
+            
+            // Display leaderboard
+            output += "=".repeat(90) + "\n";
+            output += "📊 LEADERBOARD\n";
+            output += "=".repeat(90) + "\n";
+            output += "Rank   Model        Cash Out         P&L            Return   Trades\n";
+            output += "-".repeat(90) + "\n";
+            
+            const sortedResults = Object.entries(results).sort((a, b) => b[1].cash_out_value - a[1].cash_out_value);
+            const rankEmojis = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣", "6️⃣"];
+            
+            sortedResults.forEach((entry, rank) => {
+                const [modelName, data] = entry;
+                const realizedPnl = data.realized_pnl;
+                const returnPct = data.return_pct;
+                const cashOutValue = data.cash_out_value;
+                const numTrades = data.num_trades;
+                
+                const rankEmoji = rankEmojis[rank] || "❓";
+                let trend = "📈";
+                if (returnPct <= 10 && returnPct > 0) trend = "📗";
+                else if (returnPct <= 0 && returnPct > -20) trend = "📘";
+                else if (returnPct <= -20) trend = "📉";
+                
+                const line = `${rankEmoji}  #${rank + 1}  ${modelName.padEnd(12)} $${cashOutValue.toFixed(0).padStart(9)}  $${realizedPnl.toFixed(0).padStart(9)}  ${returnPct.toFixed(1).padStart(6)}%  ${numTrades.toString().padStart(3)}  ${trend}`;
+                output += line + "\n";
+            });
+            
+            output += "=".repeat(90) + "\n";
+            
+            // Summary
+            if (Object.keys(results).length > 0) {
+                const totalCombined = Object.values(results).reduce((sum, data) => sum + data.cash_out_value, 0);
+                const avgReturn = Object.values(results).reduce((sum, data) => sum + data.return_pct, 0) / Object.values(results).length;
+                
+                output += `\n💰 Total: $${totalCombined.toFixed(0)} | Avg Return: ${avgReturn.toFixed(1)}%\n\n`;
+            }
+            
+            output += "=".repeat(90) + "\n";
+            
+            document.getElementById("output").textContent = output;
+            document.getElementById("output").classList.remove("loading");
+        }
+        
+        main();
+    </script>
+</body>
+</html>
