@@ -33,31 +33,26 @@
         const HYPERLIQUID_API = "https://api.hyperliquid.xyz";
         
         const MODELS = {
-            "DeepSeek": {
-                "address": "0xc20ac4dc4188660cbf555448af52694ca62b0734",
-                "initial_capital": 10000
-            },
-            "Grok-4": {
-                "address": "0x56d652e62998251b56c8398fb11fcfe464c08f84",
-                "initial_capital": 10000
-            },
-            "Claude": {
-                "address": "0x59fa085d106541a834017b97060bcbbb0aa82869",
-                "initial_capital": 10000
-            },
-            "GPT-5": {
-                "address": "0x67293d914eafb26878534571add81f6bd2d9fe06",
-                "initial_capital": 10000
-            },
-            "Gemini": {
-                "address": "0x1b7a7d099a670256207a30dd0ae13d35f278010f",
-                "initial_capital": 10000
-            },
-            "Qwen3": {
-                "address": "0x7a8fd8bba33e37361ca6b0cb4518a44681bad2f3",
-                "initial_capital": 10000
-            }
+            "DeepSeek": "0xc20ac4dc4188660cbf555448af52694ca62b0734",
+            "Grok-4": "0x56d652e62998251b56c8398fb11fcfe464c08f84",
+            "Claude": "0x59fa085d106541a834017b97060bcbbb0aa82869",
+            "GPT-5": "0x67293d914eafb26878534571add81f6bd2d9fe06",
+            "Gemini": "0x1b7a7d099a670256207a30dd0ae13d35f278010f",
+            "Qwen3": "0x7a8fd8bba33e37361ca6b0cb4518a44681bad2f3"
         };
+        
+        async function getAccountData(walletAddress) {
+            try {
+                const response = await fetch(`${HYPERLIQUID_API}/info`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ type: "clearinghouseState", user: walletAddress })
+                });
+                return await response.json();
+            } catch (e) {
+                return null;
+            }
+        }
         
         async function getUserFills(walletAddress) {
             try {
@@ -83,6 +78,26 @@
             return realizedPnl;
         }
         
+        function calculateUnrealizedPnl(accountData) {
+            if (!accountData || !accountData.assetPositions) return 0.0;
+            let unrealizedPnl = 0.0;
+            accountData.assetPositions.forEach(pos => {
+                if (pos.unrealizedPnl) {
+                    unrealizedPnl += parseFloat(pos.unrealizedPnl);
+                }
+            });
+            return unrealizedPnl;
+        }
+        
+        function getAccountValue(accountData) {
+            if (!accountData) return 0.0;
+            if (accountData.accountValue) return parseFloat(accountData.accountValue);
+            if (accountData.crossMarginSummary && accountData.crossMarginSummary.accountValue) {
+                return parseFloat(accountData.crossMarginSummary.accountValue);
+            }
+            return 0.0;
+        }
+        
         async function main() {
             let output = "\n" + "=".repeat(90) + "\n";
             output += "🤖  NOF1.AI ALPHA ARENA\n";
@@ -91,29 +106,32 @@
             
             let results = {};
             
-            for (const [modelName, walletInfo] of Object.entries(MODELS)) {
-                const fills = await getUserFills(walletInfo.address);
+            for (const [modelName, address] of Object.entries(MODELS)) {
+                const accountData = await getAccountData(address);
+                const fills = await getUserFills(address);
                 
-                if (fills && Array.isArray(fills)) {
-                    const realizedPnl = calculateRealizedPnl(fills);
-                    const numTrades = fills.length;
-                    const cashOutValue = walletInfo.initial_capital + realizedPnl;
-                    const returnPct = (realizedPnl / walletInfo.initial_capital * 100);
-                    
-                    results[modelName] = {
-                        realized_pnl: realizedPnl,
-                        return_pct: returnPct,
-                        cash_out_value: cashOutValue,
-                        num_trades: numTrades
-                    };
-                }
+                const realizedPnl = calculateRealizedPnl(fills);
+                const unrealizedPnl = calculateUnrealizedPnl(accountData);
+                const accountValue = getAccountValue(accountData);
+                const cashOutValue = accountValue;
+                const returnPct = (cashOutValue - 10000) / 10000 * 100;
+                
+                const numTrades = fills && Array.isArray(fills) ? fills.length : 0;
+                
+                results[modelName] = {
+                    realized_pnl: realizedPnl,
+                    unrealized_pnl: unrealizedPnl,
+                    return_pct: returnPct,
+                    cash_out_value: cashOutValue,
+                    num_trades: numTrades
+                };
             }
             
             // Display leaderboard
             output += "=".repeat(90) + "\n";
             output += "📊 LEADERBOARD\n";
             output += "=".repeat(90) + "\n";
-            output += "Rank   Model        Cash Out         P&L            Return   Trades\n";
+            output += "Rank   Model        Cash Out         Return   Trades\n";
             output += "-".repeat(90) + "\n";
             
             const sortedResults = Object.entries(results).sort((a, b) => b[1].cash_out_value - a[1].cash_out_value);
@@ -121,7 +139,6 @@
             
             sortedResults.forEach((entry, rank) => {
                 const [modelName, data] = entry;
-                const realizedPnl = data.realized_pnl;
                 const returnPct = data.return_pct;
                 const cashOutValue = data.cash_out_value;
                 const numTrades = data.num_trades;
@@ -132,7 +149,7 @@
                 else if (returnPct <= 0 && returnPct > -20) trend = "📘";
                 else if (returnPct <= -20) trend = "📉";
                 
-                const line = `${rankEmoji}  #${rank + 1}  ${modelName.padEnd(12)} $${cashOutValue.toFixed(0).padStart(9)}  $${realizedPnl.toFixed(0).padStart(9)}  ${returnPct.toFixed(1).padStart(6)}%  ${numTrades.toString().padStart(3)}  ${trend}`;
+                const line = `${rankEmoji}  #${rank + 1}  ${modelName.padEnd(12)} $${cashOutValue.toFixed(0).padStart(9)}  ${returnPct.toFixed(1).padStart(6)}%  ${numTrades.toString().padStart(3)}  ${trend}`;
                 output += line + "\n";
             });
             
