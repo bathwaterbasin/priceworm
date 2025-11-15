@@ -539,32 +539,32 @@
         </div>
         
         <div class="times-grid">
-            <div class="time-card" data-edt-time="00:43">
+            <div class="time-card" data-utc-time="05:43">
                 <div class="time-name">MIDNIGHT</div>
                 <div class="time-value" data-time-display>00:43</div>
                 <div class="countdown" data-countdown></div>
                 <div class="time-description">When markets dream in darkness</div>
             </div>
             
-            <div class="time-card" data-edt-time="05:43">
+            <div class="time-card" data-utc-time="11:43">
                 <div class="time-name">PREMARKET</div>
-                <div class="time-value" data-time-display>05:43</div>
+                <div class="time-value" data-time-display>06:43</div>
                 <div class="countdown" data-countdown></div>
                 <div class="time-description">The first breath before dawn</div>
             </div>
             
-            <div class="time-card" data-edt-time="17:43">
-                <div class="time-name">AFTERHOURS</div>
-                <div class="time-value" data-time-display>17:43</div>
-                <div class="countdown" data-countdown></div>
-                <div class="time-description">Twilight revelations unfold</div>
-            </div>
-            
-            <div class="time-card" data-edt-time="12:43">
-                <div class="time-name">MIDDAY</div>
+            <div class="time-card" data-utc-time="17:43">
+                <div class="time-name">NOON</div>
                 <div class="time-value" data-time-display>12:43</div>
                 <div class="countdown" data-countdown></div>
                 <div class="time-description">Peak clarity under noon sun</div>
+            </div>
+            
+            <div class="time-card" data-utc-time="23:43">
+                <div class="time-name">EVENING</div>
+                <div class="time-value" data-time-display>18:43</div>
+                <div class="countdown" data-countdown></div>
+                <div class="time-description">When twilight possibilities fade</div>
             </div>
         </div>
         
@@ -589,7 +589,7 @@
     
     <footer>
         <p><a href="https://t.me/+xVjWoIc81d1mNTEx" target="_blank" style="color: #00ff88; text-decoration: none; transition: all 0.3s;">THE WORM TURNS</a> • <a href="https://www.tradingview.com/script/U4Y5LsGx-Price-Worm-Session-Pivots/" target="_blank" style="color: #ff00ff; text-decoration: none; transition: all 0.3s;">THE MARKET BREATHES</a> • THE DATA NEVER LIES (EXCEPT WHEN IT DOES)</p>
-        <p style="margin-top: 1rem; font-size: 0.8rem;">All times converted to your local timezone (from EDT, UTC-4)</p>
+        <p style="margin-top: 1rem; font-size: 0.8rem;">All times converted to your local timezone (from UTC)</p>
         <p style="margin-top: 0.5rem; font-size: 0.7rem; color: #404040;">Press Ctrl+Shift+W to reveal the truth</p>
     </footer>
 
@@ -679,24 +679,24 @@
             updateSacredTimes(now);
         }
 
-        // Convert EDT time to local time and calculate countdowns
+        // Convert UTC time to local time and calculate countdowns
         function updateSacredTimes(now) {
             const cards = document.querySelectorAll('.time-card');
             let nearestTime = Infinity;
             let isNearSacredTime = false;
 
             cards.forEach(card => {
-                const edtTime = card.getAttribute('data-edt-time');
-                const [edtHours, edtMinutes] = edtTime.split(':').map(Number);
+                const utcTime = card.getAttribute('data-utc-time');
+                const [utcHours, utcMinutes] = utcTime.split(':').map(Number);
                 
-                // Convert EDT (UTC-4) to local time
-                // Create a date object for today at the EDT time
-                const edtDate = new Date();
-                edtDate.setUTCHours(edtHours + 4, edtMinutes, 0, 0); // EDT is UTC-4, so add 4 to get UTC
+                // Convert UTC to local time
+                // Create a date object for today at the UTC time
+                const utcDate = new Date();
+                utcDate.setUTCHours(utcHours, utcMinutes, 0, 0);
                 
                 // Get local time representation
-                const localHours = String(edtDate.getHours()).padStart(2, '0');
-                const localMinutes = String(edtDate.getMinutes()).padStart(2, '0');
+                const localHours = String(utcDate.getHours()).padStart(2, '0');
+                const localMinutes = String(utcDate.getMinutes()).padStart(2, '0');
                 
                 // Update the display
                 const timeDisplay = card.querySelector('[data-time-display]');
@@ -704,7 +704,7 @@
                 
                 // Calculate time until this sacred time
                 let targetTime = new Date(now);
-                targetTime.setHours(edtDate.getHours(), edtDate.getMinutes(), 0, 0);
+                targetTime.setHours(utcDate.getHours(), utcDate.getMinutes(), 0, 0);
                 
                 // If the time has passed today, set it for tomorrow
                 if (targetTime <= now) {
